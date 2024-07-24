@@ -221,7 +221,7 @@ class TabortuapiController extends SecureController{
 		$this->rec_id = $rec_id;
 		$tablename = $this->tablename;
 		//editable fields
-		$fields = $this->fields = array("id","nama","number");
+		$fields = $this->fields = array("id","nama","number", "school_id");
 		$page_error = null;
 		if($formdata){
 			$postdata = array();
@@ -232,10 +232,13 @@ class TabortuapiController extends SecureController{
 			$this->rules_array = array(
 				'nama' => 'required',
 				'number' => 'required',
+				'school_id' => 'required'
+
 			);
 			$this->sanitize_array = array(
 				'nama' => 'sanitize_string',
 				'number' => 'sanitize_string',
+				'school_id' => 'sanitize_string'
 			);
 			$this->filter_rules = true; //filter validation rules by excluding fields not in the formdata
 			$modeldata = $this->modeldata = $this->validate_form($postdata);

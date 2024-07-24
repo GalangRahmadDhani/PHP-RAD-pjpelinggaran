@@ -121,14 +121,18 @@ class TabkelasController extends SecureController{
 			$tablename = $this->tablename;
 			$request = $this->request;
 			//fillable fields
-			$fields = $this->fields = array("nama");
+			$fields = $this->fields = array("nama", "school_id");
 			$postdata = $this->format_request_data($formdata);
 			$postdata['school_id'] = USER_SCHOOL_ID; 
 			$this->rules_array = array(
 				'nama' => 'required',
+				'school_id' => 'required'
+
 			);
 			$this->sanitize_array = array(
 				'nama' => 'sanitize_string',
+				'school_id' => 'sanitize_string'
+
 			);
 			$this->filter_vals = true; //set whether to remove empty fields
 			$modeldata = $this->modeldata = $this->validate_form($postdata);

@@ -193,7 +193,7 @@ class TabsiswaapiController extends SecureController{
 		$this->rec_id = $rec_id;
 		$tablename = $this->tablename;
 		 //editable fields
-		$fields = $this->fields = array("id","nama","nis","jenkel","kelas_id","jurusan_id","ortu_id","guru_id");
+		$fields = $this->fields = array("id","nama","nis","jenkel","kelas_id","jurusan_id","ortu_id","guru_id", "school_id");
 		if($formdata){
 			$postdata = $this->format_request_data($formdata);
 			$this->rules_array = array(
@@ -204,6 +204,8 @@ class TabsiswaapiController extends SecureController{
 				'jurusan_id' => 'required',
 				'ortu_id' => 'required',
 				'guru_id' => 'required',
+				'school_id' => 'required'
+
 			);
 			$this->sanitize_array = array(
 				'nama' => 'sanitize_string',
@@ -213,6 +215,8 @@ class TabsiswaapiController extends SecureController{
 				'jurusan_id' => 'sanitize_string',
 				'ortu_id' => 'sanitize_string',
 				'guru_id' => 'sanitize_string',
+				'school_id' => 'sanitize_string'
+
 			);
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
 			if($this->validated()){

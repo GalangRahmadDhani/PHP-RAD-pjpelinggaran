@@ -138,6 +138,8 @@ class TabpelanggaranapiController extends SecureController{
 				'jpelanggaran_id' => 'required',
 				'tgl' => 'required',
 				'deskripsi' => 'required',
+				'school_id' => 'required'
+
 				// 'school_id' => 'required|numeric', // {{ edit_3 }} - Dihapus dari validasi
 			);
 			$this->sanitize_array = array(
@@ -145,7 +147,7 @@ class TabpelanggaranapiController extends SecureController{
 				'jpelanggaran_id' => 'sanitize_string',
 				'tgl' => 'sanitize_string',
 				'deskripsi' => 'sanitize_string',
-				// 'school_id' => 'sanitize_string', // {{ edit_4 }} - Dihapus dari sanitasi
+				'school_id' => 'sanitize_string', // {{ edit_4 }} - Dihapus dari sanitasi
 			);
 			$this->filter_vals = true; //set whether to remove empty fields
 			$modeldata = $this->modeldata = $this->validate_form($postdata);

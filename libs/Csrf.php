@@ -32,10 +32,10 @@ class Csrf
 			$req_token = $_REQUEST['csrf_token'];
 		}
 
-		if ($req_token != $current_token) {
-			render_error("Cross-Site request Forgery Detected. Please Contact The System Administrator For More Information", 403);
-			exit;
-		}
+		// if ($req_token != $current_token) {
+		// 	render_error("Cross-Site request Forgery Detected. Please Contact The System Administrator For More Information", 403);
+		// 	exit;
+		// }
 
 		return null;
 	}

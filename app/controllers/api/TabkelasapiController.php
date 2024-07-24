@@ -161,14 +161,16 @@ class TabkelasapiController extends SecureController{
 		$this->rec_id = $rec_id;
 		$tablename = $this->tablename;
 		 //editable fields
-		$fields = $this->fields = array("id","nama");
+		$fields = $this->fields = array("id","nama", "school_id");
 		if($formdata){
 			$postdata = $this->format_request_data($formdata);
 			$this->rules_array = array(
 				'nama' => 'required',
+				'school_id' => 'required'
 			);
 			$this->sanitize_array = array(
 				'nama' => 'sanitize_string',
+				'school_id' => 'sanitize_string',
 			);
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
 			if($this->validated()){

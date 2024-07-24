@@ -138,8 +138,8 @@ class TabsiswaController extends SecureController{
 			$db = $this->GetModel();
 			$tablename = $this->tablename;
 			$request = $this->request;
-			//fillable fields
-			$fields = $this->fields = array("nama","nis","jenkel","kelas_id","jurusan_id","ortu_id","guru_id");
+			// Fillable fields
+			$fields = $this->fields = array("nama","nis","jenkel","kelas_id","jurusan_id","ortu_id","guru_id", "school_id");
 			$postdata = $this->format_request_data($formdata);
 			$postdata['school_id'] = USER_SCHOOL_ID; 
 			$this->rules_array = array(
@@ -150,6 +150,7 @@ class TabsiswaController extends SecureController{
 				'jurusan_id' => 'required',
 				'ortu_id' => 'required',
 				'guru_id' => 'required',
+				'school_id' => 'required',
 			);
 			$this->sanitize_array = array(
 				'nama' => 'sanitize_string',
@@ -159,14 +160,15 @@ class TabsiswaController extends SecureController{
 				'jurusan_id' => 'sanitize_string',
 				'ortu_id' => 'sanitize_string',
 				'guru_id' => 'sanitize_string',
+				'school_id' => 'sanitize_string',
 			);
-			$this->filter_vals = true; //set whether to remove empty fields
+			$this->filter_vals = true; // Set whether to remove empty fields
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
 			if($this->validated()){
 				$rec_id = $this->rec_id = $db->insert($tablename, $modeldata);
 				if($rec_id){
 					$this->set_flash_msg("Record added successfully", "success");
-					return	$this->redirect("tabsiswa");
+					return $this->redirect("tabsiswa");
 				}
 				else{
 					$this->set_page_error();
@@ -176,6 +178,7 @@ class TabsiswaController extends SecureController{
 		$page_title = $this->view->page_title = "Add New Tabsiswa";
 		$this->render_view("tabsiswa/add.php");
 	}
+	
 	/**
      * Update table record with formdata
 	 * @param $rec_id (select record by table primary key)
@@ -188,7 +191,7 @@ class TabsiswaController extends SecureController{
 		$this->rec_id = $rec_id;
 		$tablename = $this->tablename;
 		 //editable fields
-		$fields = $this->fields = array("id","nama","nis","jenkel","kelas_id","jurusan_id","ortu_id","guru_id");
+		$fields = $this->fields = array("id","nama","nis","jenkel","kelas_id","jurusan_id","ortu_id","guru_id", "school_id");
 		if($formdata){
 			$postdata = $this->format_request_data($formdata);
 			$this->rules_array = array(
@@ -199,6 +202,7 @@ class TabsiswaController extends SecureController{
 				'jurusan_id' => 'required',
 				'ortu_id' => 'required',
 				'guru_id' => 'required',
+				'school_id' => 'required'
 			);
 			$this->sanitize_array = array(
 				'nama' => 'sanitize_string',
@@ -208,6 +212,7 @@ class TabsiswaController extends SecureController{
 				'jurusan_id' => 'sanitize_string',
 				'ortu_id' => 'sanitize_string',
 				'guru_id' => 'sanitize_string',
+				'school_id' => 'sanitize_string',
 			);
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
 			if($this->validated()){

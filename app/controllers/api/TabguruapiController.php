@@ -140,9 +140,13 @@ class TabguruapiController extends SecureController{
 	
 			$this->rules_array = array(
 				'nama' => 'required',
+				'school_id' => 'required'
+
 			);
 			$this->sanitize_array = array(
 				'nama' => 'sanitize_string',
+				'school_id' => 'sanitize_string'
+
 			);
 			$this->filter_vals = true; // Set whether to remove empty fields
 			$modeldata = $this->modeldata = $this->validate_form($postdata);

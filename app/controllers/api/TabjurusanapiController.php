@@ -129,11 +129,11 @@ class TabjurusanapiController extends SecureController{
 
 			$this->rules_array = array(
 				'nama' => 'required',
-				// 'school_id' => 'required|numeric', // {{ edit_3 }} - Dihapus dari validasi
+				'school_id' => 'required', // {{ edit_3 }} - Dihapus dari validasi
 			);
 			$this->sanitize_array = array(
 				'nama' => 'sanitize_string',
-				// 'school_id' => 'sanitize_string', // {{ edit_4 }} - Dihapus dari sanitasi
+				'school_id' => 'sanitize_string', // {{ edit_4 }} - Dihapus dari sanitasi
 			);
 			$this->filter_vals = true; //set whether to remove empty fields
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
