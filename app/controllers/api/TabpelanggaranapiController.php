@@ -131,9 +131,7 @@ class TabpelanggaranapiController extends SecureController{
 			//fillable fields
 			$fields = $this->fields = array("siswa_id", "jpelanggaran_id", "tgl", "deskripsi", "school_id"); // {{ edit_1 }} - Tambahkan school_id
 			$postdata = $this->format_request_data($formdata);
-			
-			// Ambil school_id dari session pengguna yang sedang login
-			$postdata['school_id'] = USER_SCHOOL_ID; // {{ edit_2 }}
+			$postdata['school_id'] = USER_SCHOOL_ID; 
 
 			$this->rules_array = array(
 				'siswa_id' => 'required',

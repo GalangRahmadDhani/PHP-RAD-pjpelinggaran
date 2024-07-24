@@ -47,6 +47,7 @@ class TabkelasController extends SecureController{
 		if($fieldname){
 			$db->where($fieldname , $fieldvalue); //filter by a single field name
 		}
+		$db->where("tabguru.school_id", USER_SCHOOL_ID);
 		$tc = $db->withTotalCount();
 		$records = $db->get($tablename, $pagination, $fields);
 		$records_count = count($records);
@@ -122,6 +123,7 @@ class TabkelasController extends SecureController{
 			//fillable fields
 			$fields = $this->fields = array("nama");
 			$postdata = $this->format_request_data($formdata);
+			$postdata['school_id'] = USER_SCHOOL_ID; 
 			$this->rules_array = array(
 				'nama' => 'required',
 			);

@@ -136,8 +136,6 @@ class TabguruapiController extends SecureController{
 			// Fillable fields
 			$fields = $this->fields = array("nama", "school_id");
 			$postdata = $this->format_request_data($formdata);
-		   
-			// Ambil school_id dari session pengguna yang sedang login
 			$postdata['school_id'] = USER_SCHOOL_ID;
 	
 			$this->rules_array = array(
