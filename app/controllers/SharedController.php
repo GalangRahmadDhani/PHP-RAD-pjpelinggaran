@@ -7,18 +7,6 @@
 class SharedController extends BaseController{
 	
 	/**
-     * tabguru_school_id_option_list Model Action
-     * @return array
-     */
-	function tabguru_school_id_option_list(){
-		$db = $this->GetModel();
-		$sqltext = "SELECT DISTINCT school_id AS value , school_id AS label FROM tabuser ORDER BY label ASC";
-		$queryparams = null;
-		$arr = $db->rawQuery($sqltext, $queryparams);
-		return $arr;
-	}
-
-	/**
      * tabuser_user_role_id_option_list Model Action
      * @return array
      */

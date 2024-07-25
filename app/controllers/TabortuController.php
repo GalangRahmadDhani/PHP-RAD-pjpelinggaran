@@ -49,7 +49,6 @@ class TabortuController extends SecureController{
 		if($fieldname){
 			$db->where($fieldname , $fieldvalue); //filter by a single field name
 		}
-		$db->where("tabortu.school_id", USER_SCHOOL_ID);
 		$tc = $db->withTotalCount();
 		$records = $db->get($tablename, $pagination, $fields);
 		$records_count = count($records);
@@ -124,20 +123,15 @@ class TabortuController extends SecureController{
 			$tablename = $this->tablename;
 			$request = $this->request;
 			//fillable fields
-			$fields = $this->fields = array("nama","number", "school_id");
+			$fields = $this->fields = array("nama","number");
 			$postdata = $this->format_request_data($formdata);
-			$postdata['school_id'] = USER_SCHOOL_ID; 
 			$this->rules_array = array(
 				'nama' => 'required',
 				'number' => 'required',
-				'school_id' => 'required'
-
 			);
 			$this->sanitize_array = array(
 				'nama' => 'sanitize_string',
 				'number' => 'sanitize_string',
-				'school_id' => 'sanitize_string'
-
 			);
 			$this->filter_vals = true; //set whether to remove empty fields
 			$modeldata = $this->modeldata = $this->validate_form($postdata);

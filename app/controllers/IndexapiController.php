@@ -79,28 +79,76 @@ class IndexapiController extends BaseController{
      * If Not $_POST Request, Display Login Form View
      * @return View
      */
-	function login($formdata = null){
-		if($formdata){
-			$modeldata = $this->modeldata = $formdata;
-			$username = trim($modeldata['username']);
-			$password = $modeldata['password'];
-			$rememberme = (!empty($modeldata['rememberme']) ? $modeldata['rememberme'] : false);
-			$this->login_user($username, $password, $rememberme);
-		}
-		else{
-			$this->set_page_error("Invalid request");
-			$this->render_view("index/login.php");
+	function loginapi($formdata = null){
+		header('Content-Type: application/json'); // Set the content type to JSON
+	
+		if ($formdata) {
+			$username = trim($formdata['username']);
+			$password = $formdata['password'];
+			$rememberme = !empty($formdata['rememberme']) ? $formdata['rememberme'] : false;
+	
+			// Logika login menggunakan login_user
+			$db = $this->GetModel();
+			$username = filter_var($username, FILTER_SANITIZE_STRING);
+			$db->where("email", $username);
+			$tablename = $this->tablename;
+			$user = $db->getOne($tablename);
+	
+			if (!empty($user)) {
+				$password_hash = $user['password'];
+				if (password_verify($password, $password_hash)) {
+					unset($user['password']); // Remove user password. No need to store it in the session
+					set_session("user_data", $user); // Set active user data in a sessions
+	
+					// Handle "Remember Me" functionality
+					if ($rememberme) {
+						$sessionkey = time().random_str(20); // Generate a session key for the user
+						$db->where("id", $user['id']);
+						$res = $db->update($tablename, array("login_session_key" => hash_value($sessionkey)));
+						if (!empty($res)) {
+							set_cookie("login_session_key", $sessionkey); // save user login_session_key in a Cookie
+						}
+					} else {
+						clear_cookie("login_session_key"); // Clear any previous set cookie
+					}
+	
+					// Jika login berhasil, return JSON
+					return render_json([
+						'status' => 'success',
+						'message' => 'Login successful',
+						'user' => $user
+					]);
+				}
+			}
+	
+			// Jika login gagal, return JSON
+			return render_json([
+				'status' => 'error',
+				'message' => 'Invalid username or password'
+			]);
+		} else {
+			// Jika request tidak valid, return JSON
+			return render_json([
+				'status' => 'error',
+				'message' => 'Invalid request'
+			]);
 		}
 	}
+	
 	/**
      * Logout Action
      * Destroy All Sessions And Cookies
      * @return View
      */
-	function logout($arg=null){
+	function logoutapi($arg = null) {
 		Csrf::cross_check();
 		session_destroy();
 		clear_cookie("login_session_key");
-		$this->redirect("");
+	
+		return render_json([
+			"status" => "success",
+			"message" => "Logged out successfully"
+		]);
 	}
+	
 }

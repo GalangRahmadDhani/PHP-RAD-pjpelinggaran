@@ -43,35 +43,6 @@ $redirect_to = $this->redirect_to;
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group ">
-                                        <div class="row">
-                                            <div class="col-sm-4">
-                                                <label class="control-label" for="school_id">School Id <span class="text-danger">*</span></label>
-                                            </div>
-                                            <div class="col-sm-8">
-                                                <div class="">
-                                                    <select required=""  id="ctrl-school_id" name="school_id"  placeholder="Select a value ..."    class="custom-select" >
-                                                        <option value="">Select a value ...</option>
-                                                        <?php 
-                                                        $school_id_options = $comp_model -> tabguru_school_id_option_list();
-                                                        if(!empty($school_id_options)){
-                                                        foreach($school_id_options as $option){
-                                                        $value = (!empty($option['value']) ? $option['value'] : null);
-                                                        $label = (!empty($option['label']) ? $option['label'] : $value);
-                                                        $selected = $this->set_field_selected('school_id',$value, "");
-                                                        ?>
-                                                        <option <?php echo $selected; ?> value="<?php echo $value; ?>">
-                                                            <?php echo $label; ?>
-                                                        </option>
-                                                        <?php
-                                                        }
-                                                        }
-                                                        ?>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                                 <div class="form-group form-submit-btn-holder text-center mt-3">
                                     <div class="form-ajax-status"></div>
