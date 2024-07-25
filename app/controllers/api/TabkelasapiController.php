@@ -14,39 +14,39 @@ class TabkelasapiController extends SecureController{
      * @param $fieldvalue (filter field value)
      * @return BaseView
      */
-	function indexapi($fieldname = null , $fieldvalue = null){
+	function indexapi($fieldname = null, $fieldvalue = null) {
 		$request = $this->request;
 		$db = $this->GetModel();
 		$tablename = $this->tablename;
-		$fields = array("id", 
-			"nama");
+		$fields = array("id", "nama");
 		$pagination = $this->get_pagination(MAX_RECORD_COUNT); // get current pagination e.g array(page_number, page_limit)
-		//search table record
-		if(!empty($request->search)){
+	
+		// search table record
+		if (!empty($request->search)) {
 			$text = trim($request->search); 
 			$search_condition = "(
 				tabkelas.id LIKE ? OR 
 				tabkelas.nama LIKE ?
 			)";
 			$search_params = array(
-				"%$text%","%$text%"
+				"%$text%", "%$text%"
 			);
-			//setting search conditions
+			// setting search conditions
 			$db->where($search_condition, $search_params);
-			 //template to use when ajax search
-			$this->view->search_template = "tabkelas/search.php";
 		}
-		if(!empty($request->orderby)){
+	
+		if (!empty($request->orderby)) {
 			$orderby = $request->orderby;
 			$ordertype = (!empty($request->ordertype) ? $request->ordertype : ORDER_TYPE);
 			$db->orderBy($orderby, $ordertype);
-		}
-		else{
+		} else {
 			$db->orderBy("tabkelas.id", ORDER_TYPE);
 		}
-		if($fieldname){
-			$db->where($fieldname , $fieldvalue); //filter by a single field name
+	
+		if ($fieldname) {
+			$db->where($fieldname, $fieldvalue); // filter by a single field name
 		}
+	
 		$tc = $db->withTotalCount();
 		$db->where("tabguru.school_id", USER_SCHOOL_ID);
 		$records = $db->get($tablename, $pagination, $fields);
@@ -54,21 +54,20 @@ class TabkelasapiController extends SecureController{
 		$total_records = intval($tc->totalCount);
 		$page_limit = $pagination[1];
 		$total_pages = ceil($total_records / $page_limit);
-		$data = new stdClass;
-		$data->records = $records;
-		$data->record_count = $records_count;
-		$data->total_records = $total_records;
-		$data->total_page = $total_pages;
-		if($db->getLastError()){
-			$this->set_page_error();
+	
+		$data = [
+			'records' => $records,
+			'record_count' => $records_count,
+			'total_records' => $total_records,
+			'total_pages' => $total_pages
+		];
+	
+		if ($db->getLastError()) {
+			$data['error'] = $db->getLastError();
 		}
-		$page_title = $this->view->page_title = "Tabkelas";
-		$this->view->report_filename = date('Y-m-d') . '-' . $page_title;
-		$this->view->report_title = $page_title;
-		$this->view->report_layout = "report_layout.php";
-		$this->view->report_paper_size = "A4";
-		$this->view->report_orientation = "portrait";
-		$this->render_view("tabkelas/list.php", $data); //render the full page
+	
+		// Return JSON response
+		return render_json($data);
 	}
 	/**
      * View record detail 
@@ -115,39 +114,56 @@ class TabkelasapiController extends SecureController{
 	 * @param $formdata array() from $_POST
      * @return BaseView
      */
-	function addapi($formdata = null){
-		if($formdata){
-			$db = $this->GetModel();
-			$tablename = $this->tablename;
-			$request = $this->request;
-			//fillable fields
-			$fields = $this->fields = array("nama", "school_id"); // {{ edit_1 }} - Tambahkan school_id
-			$postdata = $this->format_request_data($formdata);
-			$postdata['school_id'] = USER_SCHOOL_ID;
-
-			$this->rules_array = array(
-				'nama' => 'required',
-				// 'school_id' => 'required|numeric', // {{ edit_3 }} - Dihapus dari validasi
-			);
-			$this->sanitize_array = array(
-				'nama' => 'sanitize_string',
-				// 'school_id' => 'sanitize_string', // {{ edit_4 }} - Dihapus dari sanitasi
-			);
-			$this->filter_vals = true; //set whether to remove empty fields
-			$modeldata = $this->modeldata = $this->validate_form($postdata);
-			if($this->validated()){
-				$rec_id = $this->rec_id = $db->insert($tablename, $modeldata);
-				if($rec_id){
-					$this->set_flash_msg("Record added successfully", "success");
-					return	$this->redirect("tabkelas");
-				}
-				else{
-					$this->set_page_error();
-				}
-			}
+	function addapi($formdata = null) {
+		if (!$formdata) {
+			return render_json([
+				"status" => "error",
+				"message" => "No form data provided"
+			]);
 		}
-		$page_title = $this->view->page_title = "Add New Tabkelas";
-		$this->render_view("tabkelas/add.php");
+	
+		$db = $this->GetModel();
+		$tablename = $this->tablename;
+		$fields = $this->fields = ["nama", "school_id"];
+		
+		$postdata = $this->format_request_data($formdata);
+		$postdata['school_id'] = USER_SCHOOL_ID;
+	
+		$this->rules_array = [
+			'nama' => 'required',
+			'school_id' => 'required'
+		];
+	
+		$this->sanitize_array = [
+			'nama' => 'sanitize_string',
+			'school_id' => 'sanitize_string'
+		];
+	
+		$this->filter_vals = true;
+		$modeldata = $this->modeldata = $this->validate_form($postdata);
+	
+		if (!$this->validated()) {
+			return render_json([
+				"status" => "error",
+				"message" => "Validation failed",
+				"errors" => $this->get_errors()
+			]);
+		}
+	
+		$rec_id = $this->rec_id = $db->insert($tablename, $modeldata);
+	
+		if ($rec_id) {
+			return render_json([
+				'status' => 'success',
+				'message' => 'Record added successfully',
+				'rec_id' => $rec_id
+			]);
+		} else {
+			return render_json([
+				"status" => "error",
+				"message" => "Failed to insert record"
+			]);
+		}
 	}
 	/**
      * Update table record with formdata
@@ -155,53 +171,78 @@ class TabkelasapiController extends SecureController{
 	 * @param $formdata array() from $_POST
      * @return array
      */
-	function editapi($rec_id = null, $formdata = null){
-		$request = $this->request;
+	function editapi($rec_id = null, $formdata = null) {
+		if (!$rec_id) {
+			return render_json([
+				"status" => "error",
+				"message" => "No record ID provided"
+			]);
+		}
+	
 		$db = $this->GetModel();
 		$this->rec_id = $rec_id;
 		$tablename = $this->tablename;
-		 //editable fields
-		$fields = $this->fields = array("id","nama", "school_id");
-		if($formdata){
+		$fields = $this->fields = ["id", "nama", "school_id"];
+	
+		if ($formdata) {
 			$postdata = $this->format_request_data($formdata);
-			$this->rules_array = array(
+			$this->rules_array = [
 				'nama' => 'required',
 				'school_id' => 'required'
-			);
-			$this->sanitize_array = array(
+			];
+			$this->sanitize_array = [
 				'nama' => 'sanitize_string',
 				'school_id' => 'sanitize_string',
-			);
+			];
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
-			if($this->validated()){
-				$db->where("tabkelas.id", $rec_id);;
-				$bool = $db->update($tablename, $modeldata);
-				$numRows = $db->getRowCount(); //number of affected rows. 0 = no record field updated
-				if($bool && $numRows){
-					$this->set_flash_msg("Record updated successfully", "success");
-					return $this->redirect("tabkelas");
-				}
-				else{
-					if($db->getLastError()){
-						$this->set_page_error();
-					}
-					elseif(!$numRows){
-						//not an error, but no record was updated
-						$page_error = "No record updated";
-						$this->set_page_error($page_error);
-						$this->set_flash_msg($page_error, "warning");
-						return	$this->redirect("tabkelas");
-					}
+	
+			if (!$this->validated()) {
+				return render_json([
+					"status" => "error",
+					"message" => "Validation failed",
+					"errors" => $this->get_errors()
+				]);
+			}
+	
+			$db->where("tabkelas.id", $rec_id);
+			$bool = $db->update($tablename, $modeldata);
+			$numRows = $db->getRowCount();
+	
+			if ($bool && $numRows) {
+				return render_json([
+					"status" => "success",
+					"message" => "Record updated successfully",
+					"num_rows" => $numRows
+				]);
+			} else {
+				if ($db->getLastError()) {
+					return render_json([
+						"status" => "error",
+						"message" => "Database error: " . $db->getLastError()
+					]);
+				} elseif (!$numRows) {
+					return render_json([
+						"status" => "warning",
+						"message" => "No record updated"
+					]);
 				}
 			}
 		}
-		$db->where("tabkelas.id", $rec_id);;
+	
+		$db->where("tabkelas.id", $rec_id);
 		$data = $db->getOne($tablename, $fields);
-		$page_title = $this->view->page_title = "Edit  Tabkelas";
-		if(!$data){
-			$this->set_page_error();
+	
+		if (!$data) {
+			return render_json([
+				"status" => "error",
+				"message" => "Record not found"
+			]);
 		}
-		return $this->render_view("tabkelas/edit.php", $data);
+	
+		return render_json([
+			"status" => "success",
+			"data" => $data
+		]);
 	}
 	/**
      * Update single field
@@ -263,23 +304,42 @@ class TabkelasapiController extends SecureController{
 	 * Support multi delete by separating record id by comma.
      * @return BaseView
      */
-	function deleteapi($rec_id = null){
+	function deleteapi($rec_id = null) {
 		Csrf::cross_check();
-		$request = $this->request;
+	
+		if (!$rec_id) {
+			return $this->render_json([
+				"status" => "error",
+				"message" => "No record ID provided"
+			]);
+		}
+	
 		$db = $this->GetModel();
 		$tablename = $this->tablename;
 		$this->rec_id = $rec_id;
-		//form multiple delete, split record id separated by comma into array
+	
+		// Form multiple delete, split record id separated by comma into array
 		$arr_rec_id = array_map('trim', explode(",", $rec_id));
+		
 		$db->where("tabkelas.id", $arr_rec_id, "in");
 		$bool = $db->delete($tablename);
-		if($bool){
-			$this->set_flash_msg("Record deleted successfully", "success");
+	
+		if ($bool) {
+			return $this->render_json([
+				"status" => "success",
+				"message" => "Record(s) deleted successfully",
+				"deleted_records" => count($arr_rec_id)
+			]);
+		} elseif ($db->getLastError()) {
+			return $this->render_json([
+				"status" => "error",
+				"message" => "Database error: " . $db->getLastError()
+			]);
+		} else {
+			return $this->render_json([
+				"status" => "warning",
+				"message" => "No records were deleted"
+			]);
 		}
-		elseif($db->getLastError()){
-			$page_error = $db->getLastError();
-			$this->set_flash_msg($page_error, "danger");
-		}
-		return	$this->redirect("tabkelas");
 	}
 }

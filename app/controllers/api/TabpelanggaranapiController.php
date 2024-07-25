@@ -14,67 +14,78 @@ class TabpelanggaranapiController extends SecureController{
      * @param $fieldvalue (filter field value)
      * @return BaseView
      */
-	function indexapi($fieldname = null , $fieldvalue = null){
+	function indexapi($fieldname = null, $fieldvalue = null) {
 		$request = $this->request;
 		$db = $this->GetModel();
 		$tablename = $this->tablename;
-		$fields = array("id", 
-			"siswa_id", 
-			"jpelanggaran_id", 
-			"tgl", 
-			"deskripsi");
-		$pagination = $this->get_pagination(MAX_RECORD_COUNT); // get current pagination e.g array(page_number, page_limit)
-		//search table record
-		if(!empty($request->search)){
+		$fields = array(
+			"id", 
+			"nama", 
+			"nis", 
+			"jenkel", 
+			"kelas_id", 
+			"jurusan_id", 
+			"ortu_id", 
+			"guru_id"
+		);
+	
+		// Search table record
+		if (!empty($request->search)) {
 			$text = trim($request->search); 
 			$search_condition = "(
-				tabpelanggaran.id LIKE ? OR 
-				tabpelanggaran.siswa_id LIKE ? OR 
-				tabpelanggaran.jpelanggaran_id LIKE ? OR 
-				tabpelanggaran.tgl LIKE ? OR 
-				tabpelanggaran.deskripsi LIKE ?
+				tabsiswa.id LIKE ? OR 
+				tabsiswa.nama LIKE ? OR 
+				tabsiswa.nis LIKE ? OR 
+				tabsiswa.jenkel LIKE ? OR 
+				tabsiswa.kelas_id LIKE ? OR 
+				tabsiswa.jurusan_id LIKE ? OR 
+				tabsiswa.ortu_id LIKE ? OR 
+				tabsiswa.guru_id LIKE ?
 			)";
 			$search_params = array(
-				"%$text%","%$text%","%$text%","%$text%","%$text%"
+				"%$text%", "%$text%", "%$text%", "%$text%", "%$text%", "%$text%", "%$text%", "%$text%"
 			);
-			//setting search conditions
 			$db->where($search_condition, $search_params);
-			 //template to use when ajax search
-			$this->view->search_template = "tabpelanggaran/search.php";
 		}
-		if(!empty($request->orderby)){
+	
+		// Ordering
+		if (!empty($request->orderby)) {
 			$orderby = $request->orderby;
 			$ordertype = (!empty($request->ordertype) ? $request->ordertype : ORDER_TYPE);
 			$db->orderBy($orderby, $ordertype);
+		} else {
+			$db->orderBy("tabsiswa.id", ORDER_TYPE);
 		}
-		else{
-			$db->orderBy("tabpelanggaran.id", ORDER_TYPE);
+	
+		// Field filtering
+		if ($fieldname) {
+			$db->where($fieldname, $fieldvalue);
 		}
-		if($fieldname){
-			$db->where($fieldname , $fieldvalue); //filter by a single field name
-		}
-		$tc = $db->withTotalCount();
-		$records = $db->get($tablename, $pagination, $fields);
+	
+		// Add school filter
+		$db->where("tabguru.school_id", USER_SCHOOL_ID);
+	
+		// Fetch records
+		$records = $db->get($tablename, null, $fields);
 		$records_count = count($records);
-		$total_records = intval($tc->totalCount);
-		$page_limit = $pagination[1];
-		$total_pages = ceil($total_records / $page_limit);
-		$data = new stdClass;
-		$data->records = $records;
-		$data->record_count = $records_count;
-		$data->total_records = $total_records;
-		$data->total_page = $total_pages;
-		if($db->getLastError()){
-			$this->set_page_error();
+	
+		if ($db->getLastError()) {
+			return render_json([
+				'status' => 'error',
+				'message' => 'Database error: ' . $db->getLastError(),
+				'data' => []
+			]);
 		}
-		$page_title = $this->view->page_title = "Tabpelanggaran";
-		$this->view->report_filename = date('Y-m-d') . '-' . $page_title;
-		$this->view->report_title = $page_title;
-		$this->view->report_layout = "report_layout.php";
-		$this->view->report_paper_size = "A4";
-		$this->view->report_orientation = "portrait";
-		$this->render_view("tabpelanggaran/list.php", $data); //render the full page
+	
+		return render_json([
+			'status' => 'success',
+			'data' => [
+				'records' => $records,
+				'record_count' => $records_count
+			]
+		]);
 	}
+	
 	/**
      * View record detail 
 	 * @param $rec_id (select record by table primary key) 
@@ -123,47 +134,63 @@ class TabpelanggaranapiController extends SecureController{
 	 * @param $formdata array() from $_POST
      * @return BaseView
      */
-	function addapi($formdata = null){
-		if($formdata){
-			$db = $this->GetModel();
-			$tablename = $this->tablename;
-			$request = $this->request;
-			//fillable fields
-			$fields = $this->fields = array("siswa_id", "jpelanggaran_id", "tgl", "deskripsi", "school_id"); // {{ edit_1 }} - Tambahkan school_id
-			$postdata = $this->format_request_data($formdata);
-			$postdata['school_id'] = USER_SCHOOL_ID; 
-
-			$this->rules_array = array(
-				'siswa_id' => 'required',
-				'jpelanggaran_id' => 'required',
-				'tgl' => 'required',
-				'deskripsi' => 'required',
-				'school_id' => 'required'
-
-				// 'school_id' => 'required|numeric', // {{ edit_3 }} - Dihapus dari validasi
-			);
-			$this->sanitize_array = array(
-				'siswa_id' => 'sanitize_string',
-				'jpelanggaran_id' => 'sanitize_string',
-				'tgl' => 'sanitize_string',
-				'deskripsi' => 'sanitize_string',
-				'school_id' => 'sanitize_string', // {{ edit_4 }} - Dihapus dari sanitasi
-			);
-			$this->filter_vals = true; //set whether to remove empty fields
-			$modeldata = $this->modeldata = $this->validate_form($postdata);
-			if($this->validated()){
-				$rec_id = $this->rec_id = $db->insert($tablename, $modeldata);
-				if($rec_id){
-					$this->set_flash_msg("Record added successfully", "success");
-					return	$this->redirect("tabpelanggaran");
-				}
-				else{
-					$this->set_page_error();
-				}
-			}
+	function addapi($formdata = null) {
+		if (!$formdata) {
+			return render_json([
+				"status" => "error",
+				"message" => "No form data provided"
+			]);
 		}
-		$page_title = $this->view->page_title = "Add New Tabpelanggaran";
-		$this->render_view("tabpelanggaran/add.php");
+	
+		$db = $this->GetModel();
+		$tablename = $this->tablename;
+		$fields = $this->fields = ["siswa_id", "jpelanggaran_id", "tgl", "deskripsi", "school_id"];
+		
+		$postdata = $this->format_request_data($formdata);
+		$postdata['school_id'] = USER_SCHOOL_ID;
+	
+		$this->rules_array = [
+			'siswa_id' => 'required',
+			'jpelanggaran_id' => 'required',
+			'tgl' => 'required',
+			'deskripsi' => 'required',
+			'school_id' => 'required'
+		];
+	
+		$this->sanitize_array = [
+			'siswa_id' => 'sanitize_string',
+			'jpelanggaran_id' => 'sanitize_string',
+			'tgl' => 'sanitize_string',
+			'deskripsi' => 'sanitize_string',
+			'school_id' => 'sanitize_string'
+		];
+	
+		$this->filter_vals = true;
+		$modeldata = $this->modeldata = $this->validate_form($postdata);
+	
+		if (!$this->validated()) {
+			return render_json([
+				"status" => "error",
+				"message" => "Validation failed",
+				"errors" => $this->get_errors()
+			]);
+		}
+	
+		$rec_id = $this->rec_id = $db->insert($tablename, $modeldata);
+	
+		if ($rec_id) {
+			return render_json([
+				'status' => 'success',
+				'message' => 'Record added successfully',
+				'rec_id' => $rec_id
+			]);
+		} else {
+			return render_json([
+				"status" => "error",
+				"message" => "Failed to insert record",
+				"db_error" => $db->getLastError()
+			]);
+		}
 	}
 	
 	/**
@@ -172,57 +199,82 @@ class TabpelanggaranapiController extends SecureController{
 	 * @param $formdata array() from $_POST
      * @return array
      */
-	function editapi($rec_id = null, $formdata = null){
-		$request = $this->request;
+	function editapi($rec_id = null, $formdata = null) {
+		if (!$rec_id) {
+			return render_json([
+				"status" => "error",
+				"message" => "No record ID provided"
+			]);
+		}
+	
 		$db = $this->GetModel();
 		$this->rec_id = $rec_id;
 		$tablename = $this->tablename;
-		 //editable fields
-		$fields = $this->fields = array("id","siswa_id","jpelanggaran_id","tgl","deskripsi");
-		if($formdata){
+		$fields = $this->fields = ["id", "siswa_id", "jpelanggaran_id", "tgl", "deskripsi"];
+	
+		if ($formdata) {
 			$postdata = $this->format_request_data($formdata);
-			$this->rules_array = array(
+			$this->rules_array = [
 				'siswa_id' => 'required',
 				'jpelanggaran_id' => 'required',
 				'tgl' => 'required',
 				'deskripsi' => 'required',
-			);
-			$this->sanitize_array = array(
+			];
+			$this->sanitize_array = [
 				'siswa_id' => 'sanitize_string',
 				'jpelanggaran_id' => 'sanitize_string',
 				'tgl' => 'sanitize_string',
 				'deskripsi' => 'sanitize_string',
-			);
+			];
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
-			if($this->validated()){
-				$db->where("tabpelanggaran.id", $rec_id);;
-				$bool = $db->update($tablename, $modeldata);
-				$numRows = $db->getRowCount(); //number of affected rows. 0 = no record field updated
-				if($bool && $numRows){
-					$this->set_flash_msg("Record updated successfully", "success");
-					return $this->redirect("tabpelanggaran");
-				}
-				else{
-					if($db->getLastError()){
-						$this->set_page_error();
-					}
-					elseif(!$numRows){
-						//not an error, but no record was updated
-						$page_error = "No record updated";
-						$this->set_page_error($page_error);
-						$this->set_flash_msg($page_error, "warning");
-						return	$this->redirect("tabpelanggaran");
-					}
+	
+			if (!$this->validated()) {
+				return render_json([
+					"status" => "error",
+					"message" => "Validation failed",
+					"errors" => $this->get_errors()
+				]);
+			}
+	
+			$db->where("tabpelanggaran.id", $rec_id);
+			$bool = $db->update($tablename, $modeldata);
+			$numRows = $db->getRowCount();
+	
+			if ($bool && $numRows) {
+				return render_json([
+					"status" => "success",
+					"message" => "Record updated successfully",
+					"num_rows" => $numRows
+				]);
+			} else {
+				if ($db->getLastError()) {
+					return render_json([
+						"status" => "error",
+						"message" => "Database error: " . $db->getLastError()
+					]);
+				} elseif (!$numRows) {
+					return render_json([
+						"status" => "warning",
+						"message" => "No record updated"
+					]);
 				}
 			}
 		}
-		$db->where("tabpelanggaran.id", $rec_id);;
+	
+		$db->where("tabpelanggaran.id", $rec_id);
 		$data = $db->getOne($tablename, $fields);
-		$page_title = $this->view->page_title = "Edit  Tabpelanggaran";
-		if(!$data){
-			$this->set_page_error();
+	
+		if (!$data) {
+			return render_json([
+				"status" => "error",
+				"message" => "Record not found"
+			]);
 		}
-		return $this->render_view("tabpelanggaran/edit.php", $data);
+	
+		return render_json([
+			"status" => "success",
+			"data" => $data
+		]);
 	}
 	/**
      * Update single field
@@ -290,23 +342,42 @@ class TabpelanggaranapiController extends SecureController{
 	 * Support multi delete by separating record id by comma.
      * @return BaseView
      */
-	function deleteapi($rec_id = null){
+	function deleteapi($rec_id = null) {
 		Csrf::cross_check();
-		$request = $this->request;
+	
+		if (!$rec_id) {
+			return $this->render_json([
+				"status" => "error",
+				"message" => "No record ID provided"
+			]);
+		}
+	
 		$db = $this->GetModel();
 		$tablename = $this->tablename;
 		$this->rec_id = $rec_id;
-		//form multiple delete, split record id separated by comma into array
+	
+		// Form multiple delete, split record id separated by comma into array
 		$arr_rec_id = array_map('trim', explode(",", $rec_id));
+		
 		$db->where("tabpelanggaran.id", $arr_rec_id, "in");
 		$bool = $db->delete($tablename);
-		if($bool){
-			$this->set_flash_msg("Record deleted successfully", "success");
+	
+		if ($bool) {
+			return $this->render_json([
+				"status" => "success",
+				"message" => "Record(s) deleted successfully",
+				"deleted_records" => count($arr_rec_id)
+			]);
+		} elseif ($db->getLastError()) {
+			return $this->render_json([
+				"status" => "error",
+				"message" => "Database error: " . $db->getLastError()
+			]);
+		} else {
+			return $this->render_json([
+				"status" => "warning",
+				"message" => "No records were deleted"
+			]);
 		}
-		elseif($db->getLastError()){
-			$page_error = $db->getLastError();
-			$this->set_flash_msg($page_error, "danger");
-		}
-		return	$this->redirect("tabpelanggaran");
 	}
 }
