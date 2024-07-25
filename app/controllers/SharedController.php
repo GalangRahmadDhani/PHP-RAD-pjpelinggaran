@@ -48,7 +48,7 @@ class SharedController extends BaseController{
      */
 	function tabsiswa_jurusan_id_option_list(){
 		$db = $this->GetModel();
-		$sqltext = "SELECT DISTINCT id AS value , id AS label FROM tabjurusan ORDER BY label ASC";
+		$sqltext = "SELECT id AS value , id AS label FROM tabjurusan ORDER BY label ASC";
 		$queryparams = null;
 		$arr = $db->rawQuery($sqltext, $queryparams);
 		return $arr;
@@ -60,7 +60,7 @@ class SharedController extends BaseController{
      */
 	function tabsiswa_ortu_id_option_list(){
 		$db = $this->GetModel();
-		$sqltext = "SELECT DISTINCT id AS value , id AS label FROM tabortu ORDER BY label ASC";
+		$sqltext = "SELECT id AS value , id AS label FROM tabortu ORDER BY label ASC";
 		$queryparams = null;
 		$arr = $db->rawQuery($sqltext, $queryparams);
 		return $arr;
@@ -72,7 +72,7 @@ class SharedController extends BaseController{
      */
 	function tabsiswa_guru_id_option_list(){
 		$db = $this->GetModel();
-		$sqltext = "SELECT DISTINCT id AS value , id AS label FROM tabguru ORDER BY label ASC";
+		$sqltext = "SELECT id AS value , id AS label FROM tabguru ORDER BY label ASC";
 		$queryparams = null;
 		$arr = $db->rawQuery($sqltext, $queryparams);
 		return $arr;

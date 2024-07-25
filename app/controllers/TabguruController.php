@@ -18,37 +18,27 @@ class TabguruController extends SecureController{
 		$request = $this->request;
 		$db = $this->GetModel();
 		$tablename = $this->tablename;
-		$fields = array("tabguru.id", 
-			"tabguru.nama", 
-			"tabguru.school_id", 
-			"tabuser.school_id AS tabuser_school_id");
+		$fields = array("id", "nama");
 		$pagination = $this->get_pagination(MAX_RECORD_COUNT); // get current pagination e.g array(page_number, page_limit)
+		
 		//search table record
 		if(!empty($request->search)){
 			$text = trim($request->search); 
 			$search_condition = "(
 				tabguru.id LIKE ? OR 
 				tabguru.nama LIKE ? OR 
-				tabguru.school_id LIKE ? OR 
-				tabuser.id LIKE ? OR 
-				tabuser.nama LIKE ? OR 
-				tabuser.email LIKE ? OR 
-				tabuser.password LIKE ? OR 
-				tabuser.image LIKE ? OR 
-				tabuser.user_role_id LIKE ? OR 
-				tabuser.school_id LIKE ? OR 
-				tabguru.date_deleted LIKE ? OR 
-				tabguru.is_deleted LIKE ?
+				tabguru.date_created LIKE ? OR 
+				tabguru.date_updated LIKE ?
 			)";
 			$search_params = array(
-				"%$text%","%$text%","%$text%","%$text%","%$text%","%$text%","%$text%","%$text%","%$text%","%$text%","%$text%","%$text%"
+				"%$text%","%$text%","%$text%","%$text%"
 			);
 			//setting search conditions
 			$db->where($search_condition, $search_params);
-			 //template to use when ajax search
+			//template to use when ajax search
 			$this->view->search_template = "tabguru/search.php";
 		}
-		$db->join("tabuser", "tabguru.school_id = tabuser.school_id", "INNER");
+		
 		if(!empty($request->orderby)){
 			$orderby = $request->orderby;
 			$ordertype = (!empty($request->ordertype) ? $request->ordertype : ORDER_TYPE);
@@ -57,30 +47,37 @@ class TabguruController extends SecureController{
 		else{
 			$db->orderBy("tabguru.id", ORDER_TYPE);
 		}
+		
 		if($fieldname){
 			$db->where($fieldname , $fieldvalue); //filter by a single field name
 		}
+		
 		$db->where("tabguru.school_id", USER_SCHOOL_ID);
+	
 		$tc = $db->withTotalCount();
 		$records = $db->get($tablename, $pagination, $fields);
 		$records_count = count($records);
 		$total_records = intval($tc->totalCount);
 		$page_limit = $pagination[1];
 		$total_pages = ceil($total_records / $page_limit);
+		
 		$data = new stdClass;
 		$data->records = $records;
 		$data->record_count = $records_count;
 		$data->total_records = $total_records;
 		$data->total_page = $total_pages;
+		
 		if($db->getLastError()){
 			$this->set_page_error();
 		}
+		
 		$page_title = $this->view->page_title = "Tabguru";
 		$this->view->report_filename = date('Y-m-d') . '-' . $page_title;
 		$this->view->report_title = $page_title;
 		$this->view->report_layout = "report_layout.php";
 		$this->view->report_paper_size = "A4";
 		$this->view->report_orientation = "portrait";
+		
 		$this->render_view("tabguru/list.php", $data); //render the full page
 	}
 	/**
@@ -105,7 +102,9 @@ class TabguruController extends SecureController{
 			"tabuser.password AS tabuser_password", 
 			"tabuser.image AS tabuser_image", 
 			"tabuser.user_role_id AS tabuser_user_role_id", 
-			"tabuser.school_id AS tabuser_school_id");
+			"tabuser.school_id AS tabuser_school_id", 
+			"tabguru.date_created", 
+			"tabguru.date_updated");
 		if($value){
 			$db->where($rec_id, urldecode($value)); //select record based on field name
 		}
@@ -149,14 +148,13 @@ class TabguruController extends SecureController{
 
 			$this->rules_array = array(
 				'nama' => 'required',
-				'school_id' => 'required',
 			);
 			$this->sanitize_array = array(
 				'nama' => 'sanitize_string',
-				'school_id' => 'sanitize_string',
 			);
 			$this->filter_vals = true; //set whether to remove empty fields
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
+			$modeldata['date_created'] = datetime_now();
 			if($this->validated()){
 				$rec_id = $this->rec_id = $db->insert($tablename, $modeldata);
 				if($rec_id){
@@ -193,6 +191,7 @@ class TabguruController extends SecureController{
 				'nama' => 'sanitize_string',
 			);
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
+			$modeldata['date_updated'] = datetime_now();
 			if($this->validated()){
 				$db->where("tabguru.id", $rec_id);;
 				$bool = $db->update($tablename, $modeldata);
@@ -250,6 +249,7 @@ class TabguruController extends SecureController{
 			);
 			$this->filter_rules = true; //filter validation rules by excluding fields not in the formdata
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
+			$modeldata['date_updated'] = datetime_now();
 			if($this->validated()){
 				$db->where("tabguru.id", $rec_id);;
 				$bool = $db->update($tablename, $modeldata);

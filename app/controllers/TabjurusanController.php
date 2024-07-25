@@ -26,10 +26,12 @@ class TabjurusanController extends SecureController{
 			$text = trim($request->search); 
 			$search_condition = "(
 				tabjurusan.id LIKE ? OR 
-				tabjurusan.nama LIKE ?
+				tabjurusan.nama LIKE ? OR 
+				tabjurusan.date_created LIKE ? OR 
+				tabjurusan.date_updated LIKE ?
 			)";
 			$search_params = array(
-				"%$text%","%$text%"
+				"%$text%","%$text%","%$text%","%$text%"
 			);
 			//setting search conditions
 			$db->where($search_condition, $search_params);
@@ -48,6 +50,7 @@ class TabjurusanController extends SecureController{
 			$db->where($fieldname , $fieldvalue); //filter by a single field name
 		}
 		$db->where("tabjurusan.school_id", USER_SCHOOL_ID);
+
 		$tc = $db->withTotalCount();
 		$records = $db->get($tablename, $pagination, $fields);
 		$records_count = count($records);
@@ -84,7 +87,9 @@ class TabjurusanController extends SecureController{
 		$fields = array("id", 
 			"nama", 
 			"posted_by", 
-			"school_id");
+			"school_id", 
+			"date_created", 
+			"date_updated");
 		if($value){
 			$db->where($rec_id, urldecode($value)); //select record based on field name
 		}
@@ -124,18 +129,16 @@ class TabjurusanController extends SecureController{
 			$fields = $this->fields = array("nama", "school_id");
 			$postdata = $this->format_request_data($formdata);
 			$postdata['school_id'] = USER_SCHOOL_ID; 
+
 			$this->rules_array = array(
 				'nama' => 'required',
-				'school_id' => 'required'
-
 			);
 			$this->sanitize_array = array(
 				'nama' => 'sanitize_string',
-				'school_id' => 'sanitize_string'
-
 			);
 			$this->filter_vals = true; //set whether to remove empty fields
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
+			$modeldata['date_created'] = datetime_now();
 			if($this->validated()){
 				$rec_id = $this->rec_id = $db->insert($tablename, $modeldata);
 				if($rec_id){
@@ -172,6 +175,7 @@ class TabjurusanController extends SecureController{
 				'nama' => 'sanitize_string',
 			);
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
+			$modeldata['date_updated'] = datetime_now();
 			if($this->validated()){
 				$db->where("tabjurusan.id", $rec_id);;
 				$bool = $db->update($tablename, $modeldata);
@@ -229,6 +233,7 @@ class TabjurusanController extends SecureController{
 			);
 			$this->filter_rules = true; //filter validation rules by excluding fields not in the formdata
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
+			$modeldata['date_updated'] = datetime_now();
 			if($this->validated()){
 				$db->where("tabjurusan.id", $rec_id);;
 				$bool = $db->update($tablename, $modeldata);

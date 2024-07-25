@@ -18,13 +18,13 @@ class TabpelanggaranController extends SecureController{
 		$request = $this->request;
 		$db = $this->GetModel();
 		$tablename = $this->tablename;
-		$fields = array(
-			"id", 
-			"siswa_id", 
-			"jpelanggaran_id", 
-			"tgl", 
-			"deskripsi"
-		);
+		$fields = array("tabpelanggaran.id", 
+			"tabpelanggaran.siswa_id", 
+			"tabsiswa.nama AS tabsiswa_nama", 
+			"tabpelanggaran.jpelanggaran_id", 
+			"tabjenispelanggaran.nama AS tabjenispelanggaran_nama", 
+			"tabpelanggaran.tgl", 
+			"tabpelanggaran.deskripsi");
 		$pagination = $this->get_pagination(MAX_RECORD_COUNT); // get current pagination e.g array(page_number, page_limit)
 		//search table record
 		if(!empty($request->search)){
@@ -34,16 +34,20 @@ class TabpelanggaranController extends SecureController{
 				tabpelanggaran.siswa_id LIKE ? OR 
 				tabpelanggaran.jpelanggaran_id LIKE ? OR 
 				tabpelanggaran.tgl LIKE ? OR 
-				tabpelanggaran.deskripsi LIKE ?
+				tabpelanggaran.deskripsi LIKE ? OR 
+				tabpelanggaran.date_created LIKE ? OR 
+				tabpelanggaran.date_updated LIKE ?
 			)";
 			$search_params = array(
-				"%$text%","%$text%","%$text%","%$text%","%$text%"
+				"%$text%","%$text%","%$text%","%$text%","%$text%","%$text%","%$text%"
 			);
 			//setting search conditions
 			$db->where($search_condition, $search_params);
 			 //template to use when ajax search
 			$this->view->search_template = "tabpelanggaran/search.php";
 		}
+		$db->join("tabsiswa", "tabpelanggaran.siswa_id = tabsiswa.id", "INNER");
+		$db->join("tabjenispelanggaran", "tabpelanggaran.jpelanggaran_id = tabjenispelanggaran.id", "INNER");
 		if(!empty($request->orderby)){
 			$orderby = $request->orderby;
 			$ordertype = (!empty($request->ordertype) ? $request->ordertype : ORDER_TYPE);
@@ -89,19 +93,25 @@ class TabpelanggaranController extends SecureController{
 		$db = $this->GetModel();
 		$rec_id = $this->rec_id = urldecode($rec_id);
 		$tablename = $this->tablename;
-		$fields = array("id", 
-			"siswa_id", 
-			"jpelanggaran_id", 
-			"tgl", 
-			"deskripsi", 
-			"posted_by", 
-			"school_id");
+		$fields = array("tabpelanggaran.id", 
+			"tabpelanggaran.siswa_id", 
+			"tabsiswa.nama AS tabsiswa_nama", 
+			"tabpelanggaran.jpelanggaran_id", 
+			"tabjenispelanggaran.nama AS tabjenispelanggaran_nama", 
+			"tabpelanggaran.tgl", 
+			"tabpelanggaran.deskripsi", 
+			"tabpelanggaran.posted_by", 
+			"tabpelanggaran.school_id", 
+			"tabpelanggaran.date_created", 
+			"tabpelanggaran.date_updated");
 		if($value){
 			$db->where($rec_id, urldecode($value)); //select record based on field name
 		}
 		else{
 			$db->where("tabpelanggaran.id", $rec_id);; //select record based on primary key
 		}
+		$db->join("tabsiswa", "tabpelanggaran.siswa_id = tabsiswa.id", "INNER");
+		$db->join("tabjenispelanggaran", "tabpelanggaran.jpelanggaran_id = tabjenispelanggaran.id", "INNER");  
 		$record = $db->getOne($tablename, $fields );
 		if($record){
 			$page_title = $this->view->page_title = "View  Tabpelanggaran";
@@ -140,22 +150,21 @@ class TabpelanggaranController extends SecureController{
 				'jpelanggaran_id' => 'required',
 				'tgl' => 'required',
 				'deskripsi' => 'required',
-				'school_id' => 'required'
 			);
 			$this->sanitize_array = array(
 				'siswa_id' => 'sanitize_string',
 				'jpelanggaran_id' => 'sanitize_string',
 				'tgl' => 'sanitize_string',
 				'deskripsi' => 'sanitize_string',
-				'school_id' => 'sanitize_string'
 			);
 			$this->filter_vals = true; //set whether to remove empty fields
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
+			$modeldata['date_created'] = datetime_now();
 			if($this->validated()){
 				$rec_id = $this->rec_id = $db->insert($tablename, $modeldata);
 				if($rec_id){
 					$this->set_flash_msg("Record added successfully", "success");
-					return $this->redirect("tabpelanggaran");
+					return	$this->redirect("tabpelanggaran");
 				}
 				else{
 					$this->set_page_error();
@@ -193,6 +202,7 @@ class TabpelanggaranController extends SecureController{
 				'deskripsi' => 'sanitize_string',
 			);
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
+			$modeldata['date_updated'] = datetime_now();
 			if($this->validated()){
 				$db->where("tabpelanggaran.id", $rec_id);;
 				$bool = $db->update($tablename, $modeldata);
@@ -256,6 +266,7 @@ class TabpelanggaranController extends SecureController{
 			);
 			$this->filter_rules = true; //filter validation rules by excluding fields not in the formdata
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
+			$modeldata['date_updated'] = datetime_now();
 			if($this->validated()){
 				$db->where("tabpelanggaran.id", $rec_id);;
 				$bool = $db->update($tablename, $modeldata);

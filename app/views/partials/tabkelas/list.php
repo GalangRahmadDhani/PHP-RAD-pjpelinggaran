@@ -153,9 +153,10 @@ $show_pagination = $this->show_pagination;
                                                     <th class="td-sno"><?php echo $counter; ?></th>
                                                     <td class="td-id"><a href="<?php print_link("tabkelas/view/$data[id]") ?>"><?php echo $data['id']; ?></a></td>
                                                     <td class="td-nama">
-                                                        <span <?php if($can_edit){ ?> data-value="<?php echo $data['nama']; ?>" 
+                                                        <span <?php if($can_edit){ ?> 
+                                                            data-value="<?php echo $data['nama']; ?>" 
                                                             data-pk="<?php echo $data['id'] ?>" 
-                                                            data-url="<?php print_link("tabkelas/editfield/" . urlencode($data['id'])); ?>" 
+                                                            data-url="<?php print_link("tabguru/editfield/" . urlencode($data['id'])); ?>" 
                                                             data-name="nama" 
                                                             data-title="Enter Nama" 
                                                             data-placement="left" 
@@ -163,8 +164,9 @@ $show_pagination = $this->show_pagination;
                                                             data-type="text" 
                                                             data-mode="popover" 
                                                             data-showbuttons="left" 
-                                                            class="is-editable" <?php } ?>>
-                                                            <?php echo $data['nama']; ?> 
+                                                            class="is-editable" 
+                                                        <?php } ?>>
+                                                            <?php echo htmlspecialchars($data['nama'], ENT_QUOTES, 'UTF-8'); ?> 
                                                         </span>
                                                     </td>
                                                     <th class="td-btn">
