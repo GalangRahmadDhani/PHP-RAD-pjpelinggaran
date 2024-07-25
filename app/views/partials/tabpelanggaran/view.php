@@ -59,50 +59,31 @@ $show_export_btn = $this->show_export_btn;
                                     <tr  class="td-siswa_id">
                                         <th class="title"> Siswa Id: </th>
                                         <td class="value">
-                                            <span <?php if($can_edit){ ?> data-value="<?php echo $data['siswa_id']; ?>" 
-                                                data-pk="<?php echo $data['id'] ?>" 
-                                                data-url="<?php print_link("tabpelanggaran/editfield/" . urlencode($data['id'])); ?>" 
-                                                data-name="siswa_id" 
-                                                data-title="Enter Siswa Id" 
-                                                data-placement="left" 
-                                                data-toggle="click" 
-                                                data-type="text" 
-                                                data-mode="popover" 
-                                                data-showbuttons="left" 
-                                                class="is-editable" <?php } ?>>
-                                                <?php echo $data['siswa_id']; ?> 
-                                            </span>
+                                            <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/tabpelanggaran/tabsiswa/id/" . urlencode($data['siswa_id'])) ?>">
+                                                <i class="material-icons">visibility</i> <?php echo $data['tabsiswa_nama'] ?>
+                                            </a>
                                         </td>
                                     </tr>
                                     <tr  class="td-jpelanggaran_id">
                                         <th class="title"> Jpelanggaran Id: </th>
                                         <td class="value">
-                                            <span <?php if($can_edit){ ?> data-value="<?php echo $data['jpelanggaran_id']; ?>" 
-                                                data-pk="<?php echo $data['id'] ?>" 
-                                                data-url="<?php print_link("tabpelanggaran/editfield/" . urlencode($data['id'])); ?>" 
-                                                data-name="jpelanggaran_id" 
-                                                data-title="Enter Jpelanggaran Id" 
-                                                data-placement="left" 
-                                                data-toggle="click" 
-                                                data-type="text" 
-                                                data-mode="popover" 
-                                                data-showbuttons="left" 
-                                                class="is-editable" <?php } ?>>
-                                                <?php echo $data['jpelanggaran_id']; ?> 
-                                            </span>
+                                            <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/tabpelanggaran/tabjenispelanggaran/id/" . urlencode($data['jpelanggaran_id'])) ?>">
+                                                <i class="material-icons">visibility</i> <?php echo $data['tabjenispelanggaran_nama'] ?>
+                                            </a>
                                         </td>
                                     </tr>
                                     <tr  class="td-tgl">
                                         <th class="title"> Tgl: </th>
                                         <td class="value">
-                                            <span <?php if($can_edit){ ?> data-value="<?php echo $data['tgl']; ?>" 
+                                            <span <?php if($can_edit){ ?> data-flatpickr="{altFormat: 'Y-m-d H:i:s', minDate: '', maxDate: ''}" 
+                                                data-value="<?php echo $data['tgl']; ?>" 
                                                 data-pk="<?php echo $data['id'] ?>" 
                                                 data-url="<?php print_link("tabpelanggaran/editfield/" . urlencode($data['id'])); ?>" 
                                                 data-name="tgl" 
                                                 data-title="Enter Tgl" 
                                                 data-placement="left" 
                                                 data-toggle="click" 
-                                                data-type="text" 
+                                                data-type="flatdatetimepicker" 
                                                 data-mode="popover" 
                                                 data-showbuttons="left" 
                                                 class="is-editable" <?php } ?>>
@@ -135,6 +116,14 @@ $show_export_btn = $this->show_export_btn;
                                     <tr  class="td-school_id">
                                         <th class="title"> School Id: </th>
                                         <td class="value"> <?php echo $data['school_id']; ?></td>
+                                    </tr>
+                                    <tr  class="td-date_created">
+                                        <th class="title"> Date Created: </th>
+                                        <td class="value"> <?php echo $data['date_created']; ?></td>
+                                    </tr>
+                                    <tr  class="td-date_updated">
+                                        <th class="title"> Date Updated: </th>
+                                        <td class="value"> <?php echo $data['date_updated']; ?></td>
                                     </tr>
                                 </tbody>
                                 <!-- Table Body End -->

@@ -48,7 +48,7 @@ class TabkelasapiController extends SecureController{
 		}
 	
 		$tc = $db->withTotalCount();
-		$db->where("tabguru.school_id", USER_SCHOOL_ID);
+		$db->where("tabkelas.school_id", USER_SCHOOL_ID);
 		$records = $db->get($tablename, $pagination, $fields);
 		$records_count = count($records);
 		$total_records = intval($tc->totalCount);

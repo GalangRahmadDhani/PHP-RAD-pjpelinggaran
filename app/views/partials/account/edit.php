@@ -67,7 +67,7 @@ $redirect_to = $this->redirect_to;
                                         <div class="form-group ">
                                             <div class="row">
                                                 <div class="col-sm-4">
-                                                    <label class="control-label" for="user_role_id">User Role Id <span class="text-danger">*</span></label>
+                                                    <label class="control-label" for="user_role_id">Role Use <span class="text-danger">*</span></label>
                                                 </div>
                                                 <div class="col-sm-8">
                                                     <div class="">
@@ -97,7 +97,7 @@ $redirect_to = $this->redirect_to;
                                         <div class="form-group ">
                                             <div class="row">
                                                 <div class="col-sm-4">
-                                                    <label class="control-label" for="school_id">School Id <span class="text-danger">*</span></label>
+                                                    <label class="control-label" for="school_id">Asal Sekolah <span class="text-danger">*</span></label>
                                                 </div>
                                                 <div class="col-sm-8">
                                                     <div class="">

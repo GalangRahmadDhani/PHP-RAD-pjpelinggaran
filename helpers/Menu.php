@@ -84,4 +84,14 @@ class Menu{
 		
 	
 	
+			public static $jenkel = array(
+		array(
+			"value" => "1", 
+			"label" => "Laki - laki", 
+		),
+		array(
+			"value" => "2", 
+			"label" => "Perempuan", 
+		),);
+		
 }

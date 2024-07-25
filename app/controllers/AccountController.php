@@ -17,11 +17,13 @@ class AccountController extends SecureController{
 		$rec_id = $this->rec_id = USER_ID; //get current user id from session
 		$db->where ("id", $rec_id);
 		$tablename = $this->tablename;
-		$fields = array("id", 
-			"nama", 
-			"email", 
-			"user_role_id", 
-			"school_id");
+		$fields = array("tabuser.id", 
+			"tabuser.nama", 
+			"tabuser.email", 
+			"tabuser.user_role_id", 
+			"tabuser.school_id", 
+			"tabsekolah.nama AS tabsekolah_nama");
+		$db->join("tabsekolah", "tabuser.school_id = tabsekolah.id", "INNER");
 		$user = $db->getOne($tablename , $fields);
 		if(!empty($user)){
 			$page_title = $this->view->page_title = "My Account";

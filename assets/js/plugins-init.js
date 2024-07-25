@@ -1,5 +1,22 @@
 Dropzone.autoDiscover = false;
 function initFormPlugins(){
+	$('.datepicker').flatpickr({
+		altInput: true, 
+		allowInput:true,
+		onReady: function(dateObj, dateStr, instance) {
+			var $cal = $(instance.calendarContainer);
+			if ($cal.find('.flatpickr-clear').length < 1) {
+				$cal.append('<button class="btn btn-light my-2 flatpickr-clear">Clear</button>');
+				$cal.find('.flatpickr-clear').on('click', function() {
+					instance.clear();
+					instance.close();
+				});
+			}
+		},
+		locale: {
+			rangeSeparator: '-to-'
+		}
+	});
 	Dropzone.autoDiscover = false;
 	$('.dropzone').each(function(){
 		let dropzoneControl = $(this)[0].dropzone;

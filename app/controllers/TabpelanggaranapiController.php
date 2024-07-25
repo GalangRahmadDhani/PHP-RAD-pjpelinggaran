@@ -20,30 +20,24 @@ class TabpelanggaranapiController extends SecureController{
 		$tablename = $this->tablename;
 		$fields = array(
 			"id", 
-			"nama", 
-			"nis", 
-			"jenkel", 
-			"kelas_id", 
-			"jurusan_id", 
-			"ortu_id", 
-			"guru_id"
+			"siswa_id", 
+			"jpelanggaran_id", 
+			"tgl", 
+			"deskripsi"
 		);
 	
 		// Search table record
 		if (!empty($request->search)) {
 			$text = trim($request->search); 
 			$search_condition = "(
-				tabsiswa.id LIKE ? OR 
-				tabsiswa.nama LIKE ? OR 
-				tabsiswa.nis LIKE ? OR 
-				tabsiswa.jenkel LIKE ? OR 
-				tabsiswa.kelas_id LIKE ? OR 
-				tabsiswa.jurusan_id LIKE ? OR 
-				tabsiswa.ortu_id LIKE ? OR 
-				tabsiswa.guru_id LIKE ?
+				tabpelanggaran.id LIKE ? OR 
+				tabpelanggaran.siswa_id LIKE ? OR 
+				tabpelanggaran.jpelanggaran_id LIKE ? OR 
+				tabpelanggaran.tgl LIKE ? OR 
+				tabpelanggaran.deskripsi LIKE ?
 			)";
 			$search_params = array(
-				"%$text%", "%$text%", "%$text%", "%$text%", "%$text%", "%$text%", "%$text%", "%$text%"
+				"%$text%","%$text%","%$text%","%$text%","%$text%"
 			);
 			$db->where($search_condition, $search_params);
 		}
@@ -54,7 +48,7 @@ class TabpelanggaranapiController extends SecureController{
 			$ordertype = (!empty($request->ordertype) ? $request->ordertype : ORDER_TYPE);
 			$db->orderBy($orderby, $ordertype);
 		} else {
-			$db->orderBy("tabsiswa.id", ORDER_TYPE);
+			$db->orderBy("tabpelanggaran.id", ORDER_TYPE);
 		}
 	
 		// Field filtering
@@ -63,7 +57,7 @@ class TabpelanggaranapiController extends SecureController{
 		}
 	
 		// Add school filter
-		$db->where("tabguru.school_id", USER_SCHOOL_ID);
+		$db->where("tabpelanggaran.school_id", USER_SCHOOL_ID);
 	
 		// Fetch records
 		$records = $db->get($tablename, null, $fields);
@@ -215,13 +209,13 @@ class TabpelanggaranapiController extends SecureController{
 		if ($formdata) {
 			$postdata = $this->format_request_data($formdata);
 			$this->rules_array = [
-				'siswa_id' => 'required',
+				// 'siswa_id' => 'required',
 				'jpelanggaran_id' => 'required',
 				'tgl' => 'required',
 				'deskripsi' => 'required',
 			];
 			$this->sanitize_array = [
-				'siswa_id' => 'sanitize_string',
+				// 'siswa_id' => 'sanitize_string',
 				'jpelanggaran_id' => 'sanitize_string',
 				'tgl' => 'sanitize_string',
 				'deskripsi' => 'sanitize_string',
@@ -232,7 +226,7 @@ class TabpelanggaranapiController extends SecureController{
 				return render_json([
 					"status" => "error",
 					"message" => "Validation failed",
-					"errors" => $this->get_errors()
+					"errors" => "Terjadi kesalahan, periksa kembali field nya",
 				]);
 			}
 	
@@ -346,7 +340,7 @@ class TabpelanggaranapiController extends SecureController{
 		Csrf::cross_check();
 	
 		if (!$rec_id) {
-			return $this->render_json([
+			return render_json([
 				"status" => "error",
 				"message" => "No record ID provided"
 			]);
@@ -359,24 +353,44 @@ class TabpelanggaranapiController extends SecureController{
 		// Form multiple delete, split record id separated by comma into array
 		$arr_rec_id = array_map('trim', explode(",", $rec_id));
 		
-		$db->where("tabpelanggaran.id", $arr_rec_id, "in");
-		$bool = $db->delete($tablename);
+		// Check if records exist before deleting
+		$db->where("id", $arr_rec_id, "in");
+		$existing_records = $db->get($tablename, null, "id");
+		$existing_count = count($existing_records);
 	
-		if ($bool) {
-			return $this->render_json([
-				"status" => "success",
-				"message" => "Record(s) deleted successfully",
-				"deleted_records" => count($arr_rec_id)
+		if ($existing_count == 0) {
+			return render_json([
+				"status" => "warning",
+				"message" => "No matching records found to delete"
 			]);
-		} elseif ($db->getLastError()) {
-			return $this->render_json([
+		}
+	
+		// Perform deletion
+		$db->where("id", $arr_rec_id, "in");
+		$bool = $db->delete($tablename);
+		
+		if ($bool) {
+			// Verify deletion by checking if records still exist
+			$db->where("id", $arr_rec_id, "in");
+			$remaining_records = $db->get($tablename, null, "id");
+			$deleted_count = $existing_count - count($remaining_records);
+	
+			if ($deleted_count > 0) {
+				return render_json([
+					"status" => "success",
+					"message" => "Record(s) deleted successfully",
+					"deleted_records" => $deleted_count
+				]);
+			} else {
+				return render_json([
+					"status" => "error",
+					"message" => "Failed to delete records"
+				]);
+			}
+		} else {
+			return render_json([
 				"status" => "error",
 				"message" => "Database error: " . $db->getLastError()
-			]);
-		} else {
-			return $this->render_json([
-				"status" => "warning",
-				"message" => "No records were deleted"
 			]);
 		}
 	}

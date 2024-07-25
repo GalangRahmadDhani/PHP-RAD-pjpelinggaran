@@ -62,7 +62,23 @@ $redirect_to = $this->redirect_to;
                                                 </div>
                                                 <div class="col-sm-8">
                                                     <div class="">
-                                                        <input id="ctrl-jenkel"  value="<?php  echo $this->set_field_value('jenkel',""); ?>" type="text" placeholder="Enter Jenkel"  required="" name="jenkel"  class="form-control " />
+                                                        <?php
+                                                        $jenkel_options = Menu :: $jenkel;
+                                                        if(!empty($jenkel_options)){
+                                                        foreach($jenkel_options as $option){
+                                                        $value = $option['value'];
+                                                        $label = $option['label'];
+                                                        //check if current option is checked option
+                                                        $checked = $this->set_field_checked('jenkel', $value, "");
+                                                        ?>
+                                                        <label class="custom-control custom-radio custom-control-inline">
+                                                            <input id="ctrl-jenkel" class="custom-control-input" <?php echo $checked ?>  value="<?php echo $value ?>" type="radio" required=""   name="jenkel" />
+                                                                <span class="custom-control-label"><?php echo $label ?></span>
+                                                            </label>
+                                                            <?php
+                                                            }
+                                                            }
+                                                            ?>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -70,63 +86,131 @@ $redirect_to = $this->redirect_to;
                                             <div class="form-group ">
                                                 <div class="row">
                                                     <div class="col-sm-4">
-                                                        <label class="control-label" for="kelas_id">Kelas Id <span class="text-danger">*</span></label>
+                                                        <label class="control-label" for="kelas_id">Kelas  <span class="text-danger">*</span></label>
                                                     </div>
                                                     <div class="col-sm-8">
                                                         <div class="">
-                                                            <input id="ctrl-kelas_id"  value="<?php  echo $this->set_field_value('kelas_id',""); ?>" type="text" placeholder="Enter Kelas Id"  required="" name="kelas_id"  class="form-control " />
-                                                            </div>
+                                                            <select required=""  id="ctrl-kelas_id" name="kelas_id"  placeholder="Select a value ..."    class="custom-select" >
+                                                                <option value="">Select a value ...</option>
+                                                                <?php 
+                                                                $kelas_id_options = $comp_model -> tabsiswa_kelas_id_option_list();
+                                                                if(!empty($kelas_id_options)){
+                                                                foreach($kelas_id_options as $option){
+                                                                $value = (!empty($option['value']) ? $option['value'] : null);
+                                                                $label = (!empty($option['label']) ? $option['label'] : $value);
+                                                                $selected = $this->set_field_selected('kelas_id',$value, "");
+                                                                ?>
+                                                                <option <?php echo $selected; ?> value="<?php echo $value; ?>">
+                                                                    <?php echo $label; ?>
+                                                                </option>
+                                                                <?php
+                                                                }
+                                                                }
+                                                                ?>
+                                                            </select>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="form-group ">
-                                                    <div class="row">
-                                                        <div class="col-sm-4">
-                                                            <label class="control-label" for="jurusan_id">Jurusan Id <span class="text-danger">*</span></label>
-                                                        </div>
-                                                        <div class="col-sm-8">
-                                                            <div class="">
-                                                                <input id="ctrl-jurusan_id"  value="<?php  echo $this->set_field_value('jurusan_id',""); ?>" type="text" placeholder="Enter Jurusan Id"  required="" name="jurusan_id"  class="form-control " />
-                                                                </div>
-                                                            </div>
+                                            </div>
+                                            <div class="form-group ">
+                                                <div class="row">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label" for="jurusan_id">Jurusan <span class="text-danger">*</span></label>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <div class="">
+                                                            <select required=""  id="ctrl-jurusan_id" name="jurusan_id"  placeholder="Pilih jurusan"    class="custom-select" >
+                                                                <option value="">Pilih jurusan</option>
+                                                                <?php 
+                                                                $jurusan_id_options = $comp_model -> tabsiswa_jurusan_id_option_list();
+                                                                if(!empty($jurusan_id_options)){
+                                                                foreach($jurusan_id_options as $option){
+                                                                $value = (!empty($option['value']) ? $option['value'] : null);
+                                                                $label = (!empty($option['label']) ? $option['label'] : $value);
+                                                                $selected = $this->set_field_selected('jurusan_id',$value, "");
+                                                                ?>
+                                                                <option <?php echo $selected; ?> value="<?php echo $value; ?>">
+                                                                    <?php echo $label; ?>
+                                                                </option>
+                                                                <?php
+                                                                }
+                                                                }
+                                                                ?>
+                                                            </select>
                                                         </div>
                                                     </div>
-                                                    <div class="form-group ">
-                                                        <div class="row">
-                                                            <div class="col-sm-4">
-                                                                <label class="control-label" for="ortu_id">Ortu Id <span class="text-danger">*</span></label>
-                                                            </div>
-                                                            <div class="col-sm-8">
-                                                                <div class="">
-                                                                    <input id="ctrl-ortu_id"  value="<?php  echo $this->set_field_value('ortu_id',""); ?>" type="text" placeholder="Enter Ortu Id"  required="" name="ortu_id"  class="form-control " />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group ">
+                                                <div class="row">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label" for="ortu_id">Orang tua siswa <span class="text-danger">*</span></label>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <div class="">
+                                                            <select required=""  id="ctrl-ortu_id" name="ortu_id"  placeholder="Masukkan orang tua siswa"    class="custom-select" >
+                                                                <option value="">Masukkan orang tua siswa</option>
+                                                                <?php 
+                                                                $ortu_id_options = $comp_model -> tabsiswa_ortu_id_option_list();
+                                                                if(!empty($ortu_id_options)){
+                                                                foreach($ortu_id_options as $option){
+                                                                $value = (!empty($option['value']) ? $option['value'] : null);
+                                                                $label = (!empty($option['label']) ? $option['label'] : $value);
+                                                                $selected = $this->set_field_selected('ortu_id',$value, "");
+                                                                ?>
+                                                                <option <?php echo $selected; ?> value="<?php echo $value; ?>">
+                                                                    <?php echo $label; ?>
+                                                                </option>
+                                                                <?php
+                                                                }
+                                                                }
+                                                                ?>
+                                                            </select>
                                                         </div>
-                                                        <div class="form-group ">
-                                                            <div class="row">
-                                                                <div class="col-sm-4">
-                                                                    <label class="control-label" for="guru_id">Guru Id <span class="text-danger">*</span></label>
-                                                                </div>
-                                                                <div class="col-sm-8">
-                                                                    <div class="">
-                                                                        <input id="ctrl-guru_id"  value="<?php  echo $this->set_field_value('guru_id',""); ?>" type="text" placeholder="Enter Guru Id"  required="" name="guru_id"  class="form-control " />
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group ">
+                                                <div class="row">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label" for="guru_id">Guru <span class="text-danger">*</span></label>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <div class="">
+                                                            <select required=""  id="ctrl-guru_id" name="guru_id"  placeholder="Masukkan guru siswa.."    class="custom-select" >
+                                                                <option value="">Masukkan guru siswa..</option>
+                                                                <?php 
+                                                                $guru_id_options = $comp_model -> tabsiswa_guru_id_option_list();
+                                                                if(!empty($guru_id_options)){
+                                                                foreach($guru_id_options as $option){
+                                                                $value = (!empty($option['value']) ? $option['value'] : null);
+                                                                $label = (!empty($option['label']) ? $option['label'] : $value);
+                                                                $selected = $this->set_field_selected('guru_id',$value, "");
+                                                                ?>
+                                                                <option <?php echo $selected; ?> value="<?php echo $value; ?>">
+                                                                    <?php echo $label; ?>
+                                                                </option>
+                                                                <?php
+                                                                }
+                                                                }
+                                                                ?>
+                                                            </select>
                                                         </div>
-                                                        <div class="form-group form-submit-btn-holder text-center mt-3">
-                                                            <div class="form-ajax-status"></div>
-                                                            <button class="btn btn-primary" type="submit">
-                                                                Submit
-                                                                <i class="material-icons">send</i>
-                                                            </button>
-                                                        </div>
-                                                    </form>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                        <div class="form-group form-submit-btn-holder text-center mt-3">
+                                            <div class="form-ajax-status"></div>
+                                            <button class="btn btn-primary" type="submit">
+                                                Submit
+                                                <i class="material-icons">send</i>
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
-                            </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>

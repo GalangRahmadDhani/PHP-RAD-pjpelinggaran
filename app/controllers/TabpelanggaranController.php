@@ -18,11 +18,13 @@ class TabpelanggaranController extends SecureController{
 		$request = $this->request;
 		$db = $this->GetModel();
 		$tablename = $this->tablename;
-		$fields = array("id", 
+		$fields = array(
+			"id", 
 			"siswa_id", 
 			"jpelanggaran_id", 
 			"tgl", 
-			"deskripsi");
+			"deskripsi"
+		);
 		$pagination = $this->get_pagination(MAX_RECORD_COUNT); // get current pagination e.g array(page_number, page_limit)
 		//search table record
 		if(!empty($request->search)){
@@ -53,6 +55,7 @@ class TabpelanggaranController extends SecureController{
 		if($fieldname){
 			$db->where($fieldname , $fieldvalue); //filter by a single field name
 		}
+		$db->where("tabpelanggaran.school_id", USER_SCHOOL_ID);
 		$tc = $db->withTotalCount();
 		$records = $db->get($tablename, $pagination, $fields);
 		$records_count = count($records);
@@ -129,19 +132,22 @@ class TabpelanggaranController extends SecureController{
 			$tablename = $this->tablename;
 			$request = $this->request;
 			//fillable fields
-			$fields = $this->fields = array("siswa_id","jpelanggaran_id","tgl","deskripsi");
+			$fields = $this->fields = array("siswa_id","jpelanggaran_id","tgl","deskripsi", "school_id");
 			$postdata = $this->format_request_data($formdata);
+			$postdata['school_id'] = USER_SCHOOL_ID; 
 			$this->rules_array = array(
 				'siswa_id' => 'required',
 				'jpelanggaran_id' => 'required',
 				'tgl' => 'required',
 				'deskripsi' => 'required',
+				'school_id' => 'required'
 			);
 			$this->sanitize_array = array(
 				'siswa_id' => 'sanitize_string',
 				'jpelanggaran_id' => 'sanitize_string',
 				'tgl' => 'sanitize_string',
 				'deskripsi' => 'sanitize_string',
+				'school_id' => 'sanitize_string'
 			);
 			$this->filter_vals = true; //set whether to remove empty fields
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
@@ -149,7 +155,7 @@ class TabpelanggaranController extends SecureController{
 				$rec_id = $this->rec_id = $db->insert($tablename, $modeldata);
 				if($rec_id){
 					$this->set_flash_msg("Record added successfully", "success");
-					return	$this->redirect("tabpelanggaran");
+					return $this->redirect("tabpelanggaran");
 				}
 				else{
 					$this->set_page_error();

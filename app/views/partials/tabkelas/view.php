@@ -79,8 +79,20 @@ $show_export_btn = $this->show_export_btn;
                                         <td class="value"> <?php echo $data['posted_by']; ?></td>
                                     </tr>
                                     <tr  class="td-school_id">
-                                        <th class="title"> School Id: </th>
-                                        <td class="value"> <?php echo $data['school_id']; ?></td>
+                                        <th class="title"> Asal Sekolah: </th>
+                                        <td class="value">
+                                            <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("tabsekolah/view/" . urlencode($data['school_id'])) ?>">
+                                                <i class="material-icons">visibility</i> <?php echo $data['tabsekolah_nama'] ?>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr  class="td-date_created">
+                                        <th class="title"> Date Created: </th>
+                                        <td class="value"> <?php echo $data['date_created']; ?></td>
+                                    </tr>
+                                    <tr  class="td-date_updated">
+                                        <th class="title"> Date Updated: </th>
+                                        <td class="value"> <?php echo $data['date_updated']; ?></td>
                                     </tr>
                                 </tbody>
                                 <!-- Table Body End -->

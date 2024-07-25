@@ -92,94 +92,36 @@ $show_export_btn = $this->show_export_btn;
                                             </span>
                                         </td>
                                     </tr>
-                                    <tr  class="td-jenkel">
-                                        <th class="title"> Jenkel: </th>
-                                        <td class="value">
-                                            <span <?php if($can_edit){ ?> data-value="<?php echo $data['jenkel']; ?>" 
-                                                data-pk="<?php echo $data['id'] ?>" 
-                                                data-url="<?php print_link("tabsiswa/editfield/" . urlencode($data['id'])); ?>" 
-                                                data-name="jenkel" 
-                                                data-title="Enter Jenkel" 
-                                                data-placement="left" 
-                                                data-toggle="click" 
-                                                data-type="text" 
-                                                data-mode="popover" 
-                                                data-showbuttons="left" 
-                                                class="is-editable" <?php } ?>>
-                                                <?php echo $data['jenkel']; ?> 
-                                            </span>
-                                        </td>
-                                    </tr>
                                     <tr  class="td-kelas_id">
                                         <th class="title"> Kelas Id: </th>
                                         <td class="value">
-                                            <span <?php if($can_edit){ ?> data-value="<?php echo $data['kelas_id']; ?>" 
-                                                data-pk="<?php echo $data['id'] ?>" 
-                                                data-url="<?php print_link("tabsiswa/editfield/" . urlencode($data['id'])); ?>" 
-                                                data-name="kelas_id" 
-                                                data-title="Enter Kelas Id" 
-                                                data-placement="left" 
-                                                data-toggle="click" 
-                                                data-type="text" 
-                                                data-mode="popover" 
-                                                data-showbuttons="left" 
-                                                class="is-editable" <?php } ?>>
-                                                <?php echo $data['kelas_id']; ?> 
-                                            </span>
+                                            <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/tabsiswa/tabkelas/id/" . urlencode($data['kelas_id'])) ?>">
+                                                <i class="material-icons">visibility</i> <?php echo $data['tabkelas_nama'] ?>
+                                            </a>
                                         </td>
                                     </tr>
                                     <tr  class="td-jurusan_id">
                                         <th class="title"> Jurusan Id: </th>
                                         <td class="value">
-                                            <span <?php if($can_edit){ ?> data-value="<?php echo $data['jurusan_id']; ?>" 
-                                                data-pk="<?php echo $data['id'] ?>" 
-                                                data-url="<?php print_link("tabsiswa/editfield/" . urlencode($data['id'])); ?>" 
-                                                data-name="jurusan_id" 
-                                                data-title="Enter Jurusan Id" 
-                                                data-placement="left" 
-                                                data-toggle="click" 
-                                                data-type="text" 
-                                                data-mode="popover" 
-                                                data-showbuttons="left" 
-                                                class="is-editable" <?php } ?>>
-                                                <?php echo $data['jurusan_id']; ?> 
-                                            </span>
+                                            <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/tabsiswa/tabjurusan/id/" . urlencode($data['jurusan_id'])) ?>">
+                                                <i class="material-icons">visibility</i> <?php echo $data['tabjurusan_nama'] ?>
+                                            </a>
                                         </td>
                                     </tr>
                                     <tr  class="td-ortu_id">
                                         <th class="title"> Ortu Id: </th>
                                         <td class="value">
-                                            <span <?php if($can_edit){ ?> data-value="<?php echo $data['ortu_id']; ?>" 
-                                                data-pk="<?php echo $data['id'] ?>" 
-                                                data-url="<?php print_link("tabsiswa/editfield/" . urlencode($data['id'])); ?>" 
-                                                data-name="ortu_id" 
-                                                data-title="Enter Ortu Id" 
-                                                data-placement="left" 
-                                                data-toggle="click" 
-                                                data-type="text" 
-                                                data-mode="popover" 
-                                                data-showbuttons="left" 
-                                                class="is-editable" <?php } ?>>
-                                                <?php echo $data['ortu_id']; ?> 
-                                            </span>
+                                            <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/tabsiswa/tabortu/id/" . urlencode($data['ortu_id'])) ?>">
+                                                <i class="material-icons">visibility</i> <?php echo $data['tabortu_nama'] ?>
+                                            </a>
                                         </td>
                                     </tr>
                                     <tr  class="td-guru_id">
-                                        <th class="title"> Guru Id: </th>
+                                        <th class="title"> Guru: </th>
                                         <td class="value">
-                                            <span <?php if($can_edit){ ?> data-value="<?php echo $data['guru_id']; ?>" 
-                                                data-pk="<?php echo $data['id'] ?>" 
-                                                data-url="<?php print_link("tabsiswa/editfield/" . urlencode($data['id'])); ?>" 
-                                                data-name="guru_id" 
-                                                data-title="Enter Guru Id" 
-                                                data-placement="left" 
-                                                data-toggle="click" 
-                                                data-type="text" 
-                                                data-mode="popover" 
-                                                data-showbuttons="left" 
-                                                class="is-editable" <?php } ?>>
-                                                <?php echo $data['guru_id']; ?> 
-                                            </span>
+                                            <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/tabsiswa/tabguru/id/" . urlencode($data['guru_id'])) ?>">
+                                                <i class="material-icons">visibility</i> <?php echo $data['tabguru_nama'] ?>
+                                            </a>
                                         </td>
                                     </tr>
                                     <tr  class="td-posted_by">
@@ -189,6 +131,14 @@ $show_export_btn = $this->show_export_btn;
                                     <tr  class="td-school_id">
                                         <th class="title"> School Id: </th>
                                         <td class="value"> <?php echo $data['school_id']; ?></td>
+                                    </tr>
+                                    <tr  class="td-date_created">
+                                        <th class="title"> Date Created: </th>
+                                        <td class="value"> <?php echo $data['date_created']; ?></td>
+                                    </tr>
+                                    <tr  class="td-date_updated">
+                                        <th class="title"> Date Updated: </th>
+                                        <td class="value"> <?php echo $data['date_updated']; ?></td>
                                     </tr>
                                 </tbody>
                                 <!-- Table Body End -->

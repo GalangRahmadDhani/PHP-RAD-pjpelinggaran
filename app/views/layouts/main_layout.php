@@ -29,6 +29,7 @@
 			Html ::  page_css('custom-style.css');
 		?>
 		<?php
+			Html ::  page_css('flatpickr.min.css');
 			Html ::  page_css('bootstrap-editable.css');
 			Html ::  page_css('dropzone.min.css');
 			Html ::  page_js('jquery-3.3.1.min.js');
@@ -132,6 +133,7 @@
 			Html ::  page_js('bootstrap-4.3.1.min.js');
 		?>
 		<?php
+			Html ::  page_js('flatpickr.min.js');
 			Html ::  page_js('bootstrap-editable.js');
 			Html ::  page_js('dropzone.min.js');
 			Html ::  page_js('plugins.js'); //boostrapswitch, passwordStrength, twbs-pagination, blueimp-gallery,

@@ -14,23 +14,15 @@ class TabsiswaapiController extends SecureController{
      * @param $fieldvalue (filter field value)
      * @return BaseView
      */
-	function indexapi($fieldname = null, $fieldvalue = null) {
+	
+	function indexapi($fieldname = null , $fieldvalue = null){
 		$request = $this->request;
 		$db = $this->GetModel();
 		$tablename = $this->tablename;
-		$fields = array(
-			"id", 
-			"nama", 
-			"nis", 
-			"jenkel", 
-			"kelas_id", 
-			"jurusan_id", 
-			"ortu_id", 
-			"guru_id"
-		);
+		$fields = array("id", "nama", "nis", "jenkel", "kelas_id", "jurusan_id", "ortu_id", "guru_id");
 	
 		// Search table record
-		if (!empty($request->search)) {
+		if(!empty($request->search)){
 			$text = trim($request->search); 
 			$search_condition = "(
 				tabsiswa.id LIKE ? OR 
@@ -42,14 +34,12 @@ class TabsiswaapiController extends SecureController{
 				tabsiswa.ortu_id LIKE ? OR 
 				tabsiswa.guru_id LIKE ?
 			)";
-			$search_params = array(
-				"%$text%", "%$text%", "%$text%", "%$text%", "%$text%", "%$text%", "%$text%", "%$text%"
-			);
+			$search_params = array_fill(0, 8, "%$text%");
 			$db->where($search_condition, $search_params);
 		}
 	
 		// Ordering
-		if (!empty($request->orderby)) {
+		if(!empty($request->orderby)){
 			$orderby = $request->orderby;
 			$ordertype = (!empty($request->ordertype) ? $request->ordertype : ORDER_TYPE);
 			$db->orderBy($orderby, $ordertype);
@@ -57,33 +47,25 @@ class TabsiswaapiController extends SecureController{
 			$db->orderBy("tabsiswa.id", ORDER_TYPE);
 		}
 	
-		// Field filtering
-		if ($fieldname) {
-			$db->where($fieldname, $fieldvalue);
+		// Additional filters
+		if($fieldname){
+			$db->where($fieldname , $fieldvalue);
 		}
-	
-		// Add school filter
-		$db->where("tabguru.school_id", USER_SCHOOL_ID);
+		$db->where("tabsiswa.school_id", USER_SCHOOL_ID);
 	
 		// Fetch records
 		$records = $db->get($tablename, null, $fields);
-		$records_count = count($records);
 	
-		if ($db->getLastError()) {
-			return render_json([
-				'status' => 'error',
-				'message' => 'Database error: ' . $db->getLastError(),
-				'data' => []
-			]);
+		if($db->getLastError()){
+			$response = array("error" => $db->getLastError());
+		} else {
+			$response = array("records" => $records);
 		}
 	
-		return render_json([
-			'status' => 'success',
-			'data' => [
-				'records' => $records,
-				'record_count' => $records_count
-			]
-		]);
+		// Return JSON response
+		header('Content-Type: application/json');
+		echo json_encode($response);
+		exit;
 	}
 	
 	/**

@@ -18,10 +18,12 @@ class TabuserController extends SecureController{
 		$request = $this->request;
 		$db = $this->GetModel();
 		$tablename = $this->tablename;
-		$fields = array("id", 
-			"nama", 
-			"email", 
-			"image");
+		$fields = array("tabuser.id", 
+			"tabuser.nama", 
+			"tabuser.email", 
+			"tabuser.image", 
+			"tabuser.school_id", 
+			"tabsekolah.nama AS tabsekolah_nama");
 		$pagination = $this->get_pagination(MAX_RECORD_COUNT); // get current pagination e.g array(page_number, page_limit)
 		//search table record
 		if(!empty($request->search)){
@@ -30,18 +32,17 @@ class TabuserController extends SecureController{
 				tabuser.id LIKE ? OR 
 				tabuser.nama LIKE ? OR 
 				tabuser.email LIKE ? OR 
-				tabuser.password LIKE ? OR 
-				tabuser.image LIKE ? OR 
-				tabuser.user_role_id LIKE ?
+				tabuser.image LIKE ?
 			)";
 			$search_params = array(
-				"%$text%","%$text%","%$text%","%$text%","%$text%","%$text%"
+				"%$text%","%$text%","%$text%","%$text%"
 			);
 			//setting search conditions
 			$db->where($search_condition, $search_params);
 			 //template to use when ajax search
 			$this->view->search_template = "tabuser/search.php";
 		}
+		$db->join("tabsekolah", "tabuser.school_id = tabsekolah.id", "INNER");
 		if(!empty($request->orderby)){
 			$orderby = $request->orderby;
 			$ordertype = (!empty($request->ordertype) ? $request->ordertype : ORDER_TYPE);

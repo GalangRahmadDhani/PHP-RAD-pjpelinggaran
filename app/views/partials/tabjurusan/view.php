@@ -82,6 +82,14 @@ $show_export_btn = $this->show_export_btn;
                                         <th class="title"> School Id: </th>
                                         <td class="value"> <?php echo $data['school_id']; ?></td>
                                     </tr>
+                                    <tr  class="td-date_created">
+                                        <th class="title"> Date Created: </th>
+                                        <td class="value"> <?php echo $data['date_created']; ?></td>
+                                    </tr>
+                                    <tr  class="td-date_updated">
+                                        <th class="title"> Date Updated: </th>
+                                        <td class="value"> <?php echo $data['date_updated']; ?></td>
+                                    </tr>
                                 </tbody>
                                 <!-- Table Body End -->
                             </table>

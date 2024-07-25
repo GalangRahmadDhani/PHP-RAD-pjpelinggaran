@@ -126,9 +126,9 @@ $show_pagination = $this->show_pagination;
                                                 <?php } ?>
                                                 <th class="td-sno">#</th>
                                                 <th  class="td-id"> Id</th>
-                                                <th  class="td-siswa_id"> Siswa Id</th>
-                                                <th  class="td-jpelanggaran_id"> Jpelanggaran Id</th>
-                                                <th  class="td-tgl"> Tgl</th>
+                                                <th  class="td-siswa_id"> Siswa</th>
+                                                <th  class="td-jpelanggaran_id"> Pelanggaran</th>
+                                                <th  class="td-tgl"> Tanggak</th>
                                                 <th  class="td-deskripsi"> Deskripsi</th>
                                                 <th class="td-btn"></th>
                                             </tr>
@@ -156,44 +156,25 @@ $show_pagination = $this->show_pagination;
                                                     <th class="td-sno"><?php echo $counter; ?></th>
                                                     <td class="td-id"><a href="<?php print_link("tabpelanggaran/view/$data[id]") ?>"><?php echo $data['id']; ?></a></td>
                                                     <td class="td-siswa_id">
-                                                        <span <?php if($can_edit){ ?> data-value="<?php echo $data['siswa_id']; ?>" 
-                                                            data-pk="<?php echo $data['id'] ?>" 
-                                                            data-url="<?php print_link("tabpelanggaran/editfield/" . urlencode($data['id'])); ?>" 
-                                                            data-name="siswa_id" 
-                                                            data-title="Enter Siswa Id" 
-                                                            data-placement="left" 
-                                                            data-toggle="click" 
-                                                            data-type="text" 
-                                                            data-mode="popover" 
-                                                            data-showbuttons="left" 
-                                                            class="is-editable" <?php } ?>>
-                                                            <?php echo $data['siswa_id']; ?> 
-                                                        </span>
+                                                        <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/tabpelanggaran/tabsiswa/id/" . urlencode($data['siswa_id'])) ?>">
+                                                            <i class="material-icons">visibility</i> <?php echo $data['tabsiswa_nama'] ?>
+                                                        </a>
                                                     </td>
                                                     <td class="td-jpelanggaran_id">
-                                                        <span <?php if($can_edit){ ?> data-value="<?php echo $data['jpelanggaran_id']; ?>" 
-                                                            data-pk="<?php echo $data['id'] ?>" 
-                                                            data-url="<?php print_link("tabpelanggaran/editfield/" . urlencode($data['id'])); ?>" 
-                                                            data-name="jpelanggaran_id" 
-                                                            data-title="Enter Jpelanggaran Id" 
-                                                            data-placement="left" 
-                                                            data-toggle="click" 
-                                                            data-type="text" 
-                                                            data-mode="popover" 
-                                                            data-showbuttons="left" 
-                                                            class="is-editable" <?php } ?>>
-                                                            <?php echo $data['jpelanggaran_id']; ?> 
-                                                        </span>
+                                                        <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/tabpelanggaran/tabjenispelanggaran/id/" . urlencode($data['jpelanggaran_id'])) ?>">
+                                                            <i class="material-icons">visibility</i> <?php echo $data['tabjenispelanggaran_nama'] ?>
+                                                        </a>
                                                     </td>
                                                     <td class="td-tgl">
-                                                        <span <?php if($can_edit){ ?> data-value="<?php echo $data['tgl']; ?>" 
+                                                        <span <?php if($can_edit){ ?> data-flatpickr="{altFormat: 'Y-m-d H:i:s', minDate: '', maxDate: ''}" 
+                                                            data-value="<?php echo $data['tgl']; ?>" 
                                                             data-pk="<?php echo $data['id'] ?>" 
                                                             data-url="<?php print_link("tabpelanggaran/editfield/" . urlencode($data['id'])); ?>" 
                                                             data-name="tgl" 
                                                             data-title="Enter Tgl" 
                                                             data-placement="left" 
                                                             data-toggle="click" 
-                                                            data-type="text" 
+                                                            data-type="flatdatetimepicker" 
                                                             data-mode="popover" 
                                                             data-showbuttons="left" 
                                                             class="is-editable" <?php } ?>>

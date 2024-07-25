@@ -141,20 +141,9 @@ $show_export_btn = $this->show_export_btn;
                                                     <tr  class="td-school_id">
                                                         <th class="title"> School Id: </th>
                                                         <td class="value">
-                                                            <span <?php if($can_edit){ ?> data-source='<?php print_link('api/json/account_school_id_option_list'); ?>' 
-                                                                data-value="<?php echo $data['school_id']; ?>" 
-                                                                data-pk="<?php echo $data['id'] ?>" 
-                                                                data-url="<?php print_link("tabuser/editfield/" . urlencode($data['id'])); ?>" 
-                                                                data-name="school_id" 
-                                                                data-title="Select a value ..." 
-                                                                data-placement="left" 
-                                                                data-toggle="click" 
-                                                                data-type="select" 
-                                                                data-mode="popover" 
-                                                                data-showbuttons="left" 
-                                                                class="is-editable" <?php } ?>>
-                                                                <?php echo $data['school_id']; ?> 
-                                                            </span>
+                                                            <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/account/tabsekolah/id/" . urlencode($data['school_id'])) ?>">
+                                                                <i class="material-icons">visibility</i> <?php echo $data['tabsekolah_nama'] ?>
+                                                            </a>
                                                         </td>
                                                     </tr>
                                                 </tbody>    
