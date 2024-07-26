@@ -53,7 +53,6 @@ class TabguruController extends SecureController{
 		}
 		
 		$db->where("tabguru.school_id", USER_SCHOOL_ID);
-	
 		$tc = $db->withTotalCount();
 		$records = $db->get($tablename, $pagination, $fields);
 		$records_count = count($records);

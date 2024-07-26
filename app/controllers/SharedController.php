@@ -36,8 +36,8 @@ class SharedController extends BaseController{
      */
 	function tabsiswa_kelas_id_option_list(){
 		$db = $this->GetModel();
-		$sqltext = "SELECT id AS value,nama AS label FROM tabkelas ORDER BY id ASC";
-		$queryparams = null;
+		$sqltext = "SELECT id AS value, nama AS label FROM tabkelas WHERE school_id = ? ORDER BY id ASC";
+		$queryparams = [USER_SCHOOL_ID];
 		$arr = $db->rawQuery($sqltext, $queryparams);
 		return $arr;
 	}
@@ -48,8 +48,8 @@ class SharedController extends BaseController{
      */
 	function tabsiswa_jurusan_id_option_list(){
 		$db = $this->GetModel();
-		$sqltext = "SELECT id AS value , id AS label FROM tabjurusan ORDER BY label ASC";
-		$queryparams = null;
+		$sqltext = "SELECT id AS value, nama AS label FROM tabjurusan WHERE school_id = ? ORDER BY id ASC";
+		$queryparams = [USER_SCHOOL_ID];
 		$arr = $db->rawQuery($sqltext, $queryparams);
 		return $arr;
 	}
@@ -60,8 +60,8 @@ class SharedController extends BaseController{
      */
 	function tabsiswa_ortu_id_option_list(){
 		$db = $this->GetModel();
-		$sqltext = "SELECT id AS value , id AS label FROM tabortu ORDER BY label ASC";
-		$queryparams = null;
+		$sqltext = "SELECT id AS value , id AS label FROM tabortu WHERE school_id = ? ORDER BY label ASC";
+		$queryparams = [USER_SCHOOL_ID];
 		$arr = $db->rawQuery($sqltext, $queryparams);
 		return $arr;
 	}
@@ -72,8 +72,8 @@ class SharedController extends BaseController{
      */
 	function tabsiswa_guru_id_option_list(){
 		$db = $this->GetModel();
-		$sqltext = "SELECT id AS value , id AS label FROM tabguru ORDER BY label ASC";
-		$queryparams = null;
+		$sqltext = "SELECT id AS value , id AS label FROM tabguru WHERE school_id = ? ORDER BY label ASC";
+		$queryparams = [USER_SCHOOL_ID];
 		$arr = $db->rawQuery($sqltext, $queryparams);
 		return $arr;
 	}
@@ -122,6 +122,38 @@ class SharedController extends BaseController{
 		$db->where("email", $val);
 		$exist = $db->has("tabuser");
 		return $exist;
+	}
+
+	/**
+     * getcount_lakilaki Model Action
+     * @return Value
+     */
+	function getcount_lakilaki(){
+		$db = $this->GetModel();
+		$sqltext = "SELECT COUNT(*) AS jumlah_laki FROM tabsiswa WHERE jenkel = 1;";
+		$queryparams = null;
+		$val = $db->rawQueryValue($sqltext, $queryparams);
+		
+		if(is_array($val)){
+			return $val[0];
+		}
+		return $val;
+	}
+
+	/**
+     * getcount_perempuan Model Action
+     * @return Value
+     */
+	function getcount_perempuan(){
+		$db = $this->GetModel();
+		$sqltext = "SELECT COUNT(*) AS jumlah_perempuan FROM tabsiswa WHERE jenkel = 2;";
+		$queryparams = null;
+		$val = $db->rawQueryValue($sqltext, $queryparams);
+		
+		if(is_array($val)){
+			return $val[0];
+		}
+		return $val;
 	}
 
 }

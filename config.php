@@ -8,7 +8,7 @@ define("ROOT", str_replace("\\", "/", dirname(__FILE__)) . "/");
 // return the application directory name.
 define("ROOT_DIR_NAME", basename(ROOT));
 
-define("SITE_NAME", "pjpelinggaran");
+define("SITE_NAME", "Si PATUH");
 
 
 // Get Site Address Dynamically
@@ -35,7 +35,7 @@ define("FORBIDDEN", 403);
 define("IMG_DIR",  "assets/images/");
 define("FONTS_DIR",  "assets/fonts/");
 define("SITE_FAVICON", IMG_DIR . "favicon.png");
-define("SITE_LOGO", IMG_DIR . "logo.png");
+define("SITE_LOGO", IMG_DIR . "sipatuh.png");
 
 define("CSS_DIR", SITE_ADDR . "assets/css/");
 define("JS_DIR", SITE_ADDR . "assets/js/");
@@ -101,5 +101,4 @@ define('USER_NAME',(isset($_SESSION[APP_ID.'user_data']) ? $_SESSION[APP_ID.'use
 define('USER_EMAIL',(isset($_SESSION[APP_ID.'user_data']) ? $_SESSION[APP_ID.'user_data']['email'] : null ));
 define('USER_PHOTO',(isset($_SESSION[APP_ID.'user_data']) ? $_SESSION[APP_ID.'user_data']['image'] : null ));
 define('USER_ROLE',(isset($_SESSION[APP_ID.'user_data']) ? $_SESSION[APP_ID.'user_data']['user_role_id'] : null ));
-define('USER_ROLE_ID',(isset($_SESSION[APP_ID.'user_data']) ? $_SESSION[APP_ID.'user_data']['user_role_id'] : null ));
 define('USER_SCHOOL_ID',(isset($_SESSION[APP_ID.'user_data']) ? $_SESSION[APP_ID.'user_data']['school_id'] : null));
