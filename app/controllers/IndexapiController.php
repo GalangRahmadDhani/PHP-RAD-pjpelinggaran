@@ -112,11 +112,16 @@ class IndexapiController extends BaseController{
 						clear_cookie("login_session_key"); // Clear any previous set cookie
 					}
 	
+					// Generate Nobox token
+					$noboxController = new NoboxController();
+					$noboxToken = $noboxController->generateTokenOnLogin();
+	
 					// Jika login berhasil, return JSON
 					return render_json([
 						'status' => 'success',
 						'message' => 'Login successful',
-						'user' => $user
+						'user' => $user,
+						'token' => $noboxToken // Include the Nobox token in the response
 					]);
 				}
 			}
@@ -142,12 +147,17 @@ class IndexapiController extends BaseController{
      */
 	function logoutapi($arg = null) {
 		Csrf::cross_check();
+		
+		// Hapus token Nobox
+		$noboxController = new NoboxController();
+		$noboxController->revokeTokenOnLogout(); // Ubah nama metode ini
+		
 		session_destroy();
 		clear_cookie("login_session_key");
 	
 		return render_json([
 			"status" => "success",
-			"message" => "Logged out successfully"
+			"message" => "Logged out successfully and Nobox token revoked"
 		]);
 	}
 	
