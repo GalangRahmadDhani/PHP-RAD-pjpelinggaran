@@ -128,8 +128,9 @@ $show_pagination = $this->show_pagination;
                                                 <th  class="td-id"> Id</th>
                                                 <th  class="td-siswa_id"> Siswa</th>
                                                 <th  class="td-jpelanggaran_id"> Pelanggaran</th>
-                                                <th  class="td-tgl"> Tanggak</th>
+                                                <th  class="td-tgl"> Tanggal</th>
                                                 <th  class="td-deskripsi"> Deskripsi</th>
+                                                <th  class="td-ortu_number"> Ortu Number</th>
                                                 <th class="td-btn"></th>
                                             </tr>
                                         </thead>
@@ -171,7 +172,7 @@ $show_pagination = $this->show_pagination;
                                                             data-pk="<?php echo $data['id'] ?>" 
                                                             data-url="<?php print_link("tabpelanggaran/editfield/" . urlencode($data['id'])); ?>" 
                                                             data-name="tgl" 
-                                                            data-title="Enter Tgl" 
+                                                            data-title="Tanggal" 
                                                             data-placement="left" 
                                                             data-toggle="click" 
                                                             data-type="flatdatetimepicker" 
@@ -186,7 +187,7 @@ $show_pagination = $this->show_pagination;
                                                             data-pk="<?php echo $data['id'] ?>" 
                                                             data-url="<?php print_link("tabpelanggaran/editfield/" . urlencode($data['id'])); ?>" 
                                                             data-name="deskripsi" 
-                                                            data-title="Enter Deskripsi" 
+                                                            data-title="Deskripsi" 
                                                             data-placement="left" 
                                                             data-toggle="click" 
                                                             data-type="text" 
@@ -196,6 +197,7 @@ $show_pagination = $this->show_pagination;
                                                             <?php echo $data['deskripsi']; ?> 
                                                         </span>
                                                     </td>
+                                                    <td class="td-ortu_number"> <?php echo $data['ortu_number']; ?></td>
                                                     <th class="td-btn">
                                                         <?php if($can_view){ ?>
                                                         <a class="btn btn-sm btn-success has-tooltip" title="View Record" href="<?php print_link("tabpelanggaran/view/$rec_id"); ?>">

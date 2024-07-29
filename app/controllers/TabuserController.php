@@ -21,7 +21,6 @@ class TabuserController extends SecureController{
 		$fields = array("tabuser.id", 
 			"tabuser.nama", 
 			"tabuser.email", 
-			"tabuser.image", 
 			"tabuser.school_id", 
 			"tabsekolah.nama AS tabsekolah_nama");
 		$pagination = $this->get_pagination(MAX_RECORD_COUNT); // get current pagination e.g array(page_number, page_limit)

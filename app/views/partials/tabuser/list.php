@@ -128,7 +128,6 @@ $show_pagination = $this->show_pagination;
                                                 <th  class="td-id"> Id</th>
                                                 <th  class="td-nama"> Nama</th>
                                                 <th  class="td-email"> Email</th>
-                                                <th  class="td-image"> Image</th>
                                                 <th  class="td-school_id"> Asal Sekolah</th>
                                                 <th class="td-btn"></th>
                                             </tr>
@@ -171,7 +170,6 @@ $show_pagination = $this->show_pagination;
                                                         </span>
                                                     </td>
                                                     <td class="td-email"><a href="<?php print_link("mailto:$data[email]") ?>"><?php echo $data['email']; ?></a></td>
-                                                    <td class="td-image"><?php Html :: page_img($data['image'],50,50,1); ?></td>
                                                     <td class="td-school_id">
                                                         <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/tabuser/tabsekolah/id/" . urlencode($data['school_id'])) ?>">
                                                             <i class="material-icons">visibility</i> <?php echo $data['tabsekolah_nama'] ?>

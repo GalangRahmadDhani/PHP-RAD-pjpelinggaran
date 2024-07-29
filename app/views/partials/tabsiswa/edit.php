@@ -94,8 +94,8 @@ $redirect_to = $this->redirect_to;
                                                     </div>
                                                     <div class="col-sm-8">
                                                         <div class="">
-                                                            <select required=""  id="ctrl-kelas_id" name="kelas_id"  placeholder="Select a value ..."    class="custom-select" >
-                                                                <option value="">Select a value ...</option>
+                                                            <select required=""  id="ctrl-kelas_id" name="kelas_id"  placeholder="Dari Kelas..."    class="custom-select" >
+                                                                <option value="">Dari Kelas...</option>
                                                                 <?php
                                                                 $rec = $data['kelas_id'];
                                                                 $kelas_id_options = $comp_model -> tabsiswa_kelas_id_option_list();

@@ -18,14 +18,18 @@ class TabsiswaController extends SecureController{
 		$request = $this->request;
 		$db = $this->GetModel();
 		$tablename = $this->tablename;
-		$fields = array("id", 
-			"nama", 
-			"nis", 
-			"jenkel", 
-			"kelas_id", 
-			"jurusan_id", 
-			"ortu_id", 
-			"guru_id");
+		$fields = array("tabsiswa.id", 
+			"tabsiswa.nama", 
+			"tabsiswa.nis", 
+			"tabsiswa.jenkel", 
+			"tabsiswa.kelas_id", 
+			"tabkelas.nama AS tabkelas_nama", 
+			"tabsiswa.jurusan_id", 
+			"tabjurusan.nama AS tabjurusan_nama", 
+			"tabsiswa.ortu_id", 
+			"tabortu.nama AS tabortu_nama", 
+			"tabsiswa.guru_id", 
+			"tabguru.nama AS tabguru_nama");
 		$pagination = $this->get_pagination(MAX_RECORD_COUNT); // get current pagination e.g array(page_number, page_limit)
 		//search table record
 		if(!empty($request->search)){
@@ -38,16 +42,22 @@ class TabsiswaController extends SecureController{
 				tabsiswa.kelas_id LIKE ? OR 
 				tabsiswa.jurusan_id LIKE ? OR 
 				tabsiswa.ortu_id LIKE ? OR 
-				tabsiswa.guru_id LIKE ?
+				tabsiswa.guru_id LIKE ? OR 
+				tabsiswa.date_created LIKE ? OR 
+				tabsiswa.date_updated LIKE ?
 			)";
 			$search_params = array(
-				"%$text%","%$text%","%$text%","%$text%","%$text%","%$text%","%$text%","%$text%"
+				"%$text%","%$text%","%$text%","%$text%","%$text%","%$text%","%$text%","%$text%","%$text%","%$text%"
 			);
 			//setting search conditions
 			$db->where($search_condition, $search_params);
 			 //template to use when ajax search
 			$this->view->search_template = "tabsiswa/search.php";
 		}
+		$db->join("tabkelas", "tabsiswa.kelas_id = tabkelas.id", "INNER");
+		$db->join("tabjurusan", "tabsiswa.jurusan_id = tabjurusan.id", "INNER");
+		$db->join("tabortu", "tabsiswa.ortu_id = tabortu.id", "INNER");
+		$db->join("tabguru", "tabsiswa.guru_id = tabguru.id", "INNER");
 		if(!empty($request->orderby)){
 			$orderby = $request->orderby;
 			$ordertype = (!empty($request->ordertype) ? $request->ordertype : ORDER_TYPE);
@@ -60,6 +70,7 @@ class TabsiswaController extends SecureController{
 			$db->where($fieldname , $fieldvalue); //filter by a single field name
 		}
 		$db->where("tabsiswa.school_id", USER_SCHOOL_ID);
+
 		$tc = $db->withTotalCount();
 		$records = $db->get($tablename, $pagination, $fields);
 		$records_count = count($records);
@@ -82,58 +93,6 @@ class TabsiswaController extends SecureController{
 		$this->view->report_orientation = "portrait";
 		$this->render_view("tabsiswa/list.php", $data); //render the full page
 	}
-	function indexapi($fieldname = null , $fieldvalue = null){
-		$request = $this->request;
-		$db = $this->GetModel();
-		$tablename = $this->tablename;
-		$fields = array("id", "nama", "nis", "jenkel", "kelas_id", "jurusan_id", "ortu_id", "guru_id");
-	
-		// Search table record
-		if(!empty($request->search)){
-			$text = trim($request->search); 
-			$search_condition = "(
-				tabsiswa.id LIKE ? OR 
-				tabsiswa.nama LIKE ? OR 
-				tabsiswa.nis LIKE ? OR 
-				tabsiswa.jenkel LIKE ? OR 
-				tabsiswa.kelas_id LIKE ? OR 
-				tabsiswa.jurusan_id LIKE ? OR 
-				tabsiswa.ortu_id LIKE ? OR 
-				tabsiswa.guru_id LIKE ?
-			)";
-			$search_params = array_fill(0, 8, "%$text%");
-			$db->where($search_condition, $search_params);
-		}
-	
-		// Ordering
-		if(!empty($request->orderby)){
-			$orderby = $request->orderby;
-			$ordertype = (!empty($request->ordertype) ? $request->ordertype : ORDER_TYPE);
-			$db->orderBy($orderby, $ordertype);
-		} else {
-			$db->orderBy("tabsiswa.id", ORDER_TYPE);
-		}
-	
-		// Additional filters
-		if($fieldname){
-			$db->where($fieldname , $fieldvalue);
-		}
-		$db->where("tabsiswa.school_id", USER_SCHOOL_ID);
-	
-		// Fetch records
-		$records = $db->get($tablename, null, $fields);
-	
-		if($db->getLastError()){
-			$response = array("error" => $db->getLastError());
-		} else {
-			$response = array("records" => $records);
-		}
-	
-		// Return JSON response
-		header('Content-Type: application/json');
-		echo json_encode($response);
-		exit;
-	}
 	/**
      * View record detail 
 	 * @param $rec_id (select record by table primary key) 
@@ -145,22 +104,32 @@ class TabsiswaController extends SecureController{
 		$db = $this->GetModel();
 		$rec_id = $this->rec_id = urldecode($rec_id);
 		$tablename = $this->tablename;
-		$fields = array("id", 
-			"nama", 
-			"nis", 
-			"jenkel", 
-			"kelas_id", 
-			"jurusan_id", 
-			"ortu_id", 
-			"guru_id", 
-			"posted_by", 
-			"school_id");
+		$fields = array("tabsiswa.id", 
+			"tabsiswa.nama", 
+			"tabsiswa.nis", 
+			"tabsiswa.jenkel", 
+			"tabsiswa.kelas_id", 
+			"tabkelas.nama AS tabkelas_nama", 
+			"tabsiswa.jurusan_id", 
+			"tabjurusan.nama AS tabjurusan_nama", 
+			"tabsiswa.ortu_id", 
+			"tabortu.nama AS tabortu_nama", 
+			"tabsiswa.guru_id", 
+			"tabguru.nama AS tabguru_nama", 
+			"tabsiswa.posted_by", 
+			"tabsiswa.school_id", 
+			"tabsiswa.date_created", 
+			"tabsiswa.date_updated");
 		if($value){
 			$db->where($rec_id, urldecode($value)); //select record based on field name
 		}
 		else{
 			$db->where("tabsiswa.id", $rec_id);; //select record based on primary key
 		}
+		$db->join("tabkelas", "tabsiswa.kelas_id = tabkelas.id", "INNER");
+		$db->join("tabjurusan", "tabsiswa.jurusan_id = tabjurusan.id", "INNER");
+		$db->join("tabortu", "tabsiswa.ortu_id = tabortu.id", "INNER");
+		$db->join("tabguru", "tabsiswa.guru_id = tabguru.id", "INNER");  
 		$record = $db->getOne($tablename, $fields );
 		if($record){
 			$page_title = $this->view->page_title = "View  Tabsiswa";
@@ -190,10 +159,11 @@ class TabsiswaController extends SecureController{
 			$db = $this->GetModel();
 			$tablename = $this->tablename;
 			$request = $this->request;
-			// Fillable fields
+			//fillable fields
 			$fields = $this->fields = array("nama","nis","jenkel","kelas_id","jurusan_id","ortu_id","guru_id", "school_id");
 			$postdata = $this->format_request_data($formdata);
 			$postdata['school_id'] = USER_SCHOOL_ID; 
+
 			$this->rules_array = array(
 				'nama' => 'required',
 				'nis' => 'required',
@@ -202,7 +172,6 @@ class TabsiswaController extends SecureController{
 				'jurusan_id' => 'required',
 				'ortu_id' => 'required',
 				'guru_id' => 'required',
-				'school_id' => 'required',
 			);
 			$this->sanitize_array = array(
 				'nama' => 'sanitize_string',
@@ -212,15 +181,15 @@ class TabsiswaController extends SecureController{
 				'jurusan_id' => 'sanitize_string',
 				'ortu_id' => 'sanitize_string',
 				'guru_id' => 'sanitize_string',
-				'school_id' => 'sanitize_string',
 			);
-			$this->filter_vals = true; // Set whether to remove empty fields
+			$this->filter_vals = true; //set whether to remove empty fields
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
+			$modeldata['date_created'] = datetime_now();
 			if($this->validated()){
 				$rec_id = $this->rec_id = $db->insert($tablename, $modeldata);
 				if($rec_id){
 					$this->set_flash_msg("Record added successfully", "success");
-					return $this->redirect("tabsiswa");
+					return	$this->redirect("tabsiswa");
 				}
 				else{
 					$this->set_page_error();
@@ -230,7 +199,6 @@ class TabsiswaController extends SecureController{
 		$page_title = $this->view->page_title = "Add New Tabsiswa";
 		$this->render_view("tabsiswa/add.php");
 	}
-	
 	/**
      * Update table record with formdata
 	 * @param $rec_id (select record by table primary key)
@@ -243,7 +211,7 @@ class TabsiswaController extends SecureController{
 		$this->rec_id = $rec_id;
 		$tablename = $this->tablename;
 		 //editable fields
-		$fields = $this->fields = array("id","nama","nis","jenkel","kelas_id","jurusan_id","ortu_id","guru_id", "school_id");
+		$fields = $this->fields = array("id","nama","nis","jenkel","kelas_id","jurusan_id","ortu_id","guru_id");
 		if($formdata){
 			$postdata = $this->format_request_data($formdata);
 			$this->rules_array = array(
@@ -254,7 +222,6 @@ class TabsiswaController extends SecureController{
 				'jurusan_id' => 'required',
 				'ortu_id' => 'required',
 				'guru_id' => 'required',
-				'school_id' => 'required'
 			);
 			$this->sanitize_array = array(
 				'nama' => 'sanitize_string',
@@ -264,9 +231,9 @@ class TabsiswaController extends SecureController{
 				'jurusan_id' => 'sanitize_string',
 				'ortu_id' => 'sanitize_string',
 				'guru_id' => 'sanitize_string',
-				'school_id' => 'sanitize_string',
 			);
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
+			$modeldata['date_updated'] = datetime_now();
 			if($this->validated()){
 				$db->where("tabsiswa.id", $rec_id);;
 				$bool = $db->update($tablename, $modeldata);
@@ -336,6 +303,7 @@ class TabsiswaController extends SecureController{
 			);
 			$this->filter_rules = true; //filter validation rules by excluding fields not in the formdata
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
+			$modeldata['date_updated'] = datetime_now();
 			if($this->validated()){
 				$db->where("tabsiswa.id", $rec_id);;
 				$bool = $db->update($tablename, $modeldata);

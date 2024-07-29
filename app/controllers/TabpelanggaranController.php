@@ -60,6 +60,7 @@ class TabpelanggaranController extends SecureController{
 			$db->where($fieldname , $fieldvalue); //filter by a single field name
 		}
 		$db->where("tabpelanggaran.school_id", USER_SCHOOL_ID);
+
 		$tc = $db->withTotalCount();
 		$records = $db->get($tablename, $pagination, $fields);
 		$records_count = count($records);

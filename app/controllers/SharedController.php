@@ -12,8 +12,8 @@ class SharedController extends BaseController{
      */
 	function tabpelanggaran_siswa_id_option_list(){
 		$db = $this->GetModel();
-		$sqltext = "SELECT id AS value , id AS label FROM tabsiswa ORDER BY label ASC";
-		$queryparams = null;
+		$sqltext = "SELECT id AS value , nama AS label FROM tabsiswa WHERE school_id = ? ORDER BY label ASC";
+		$queryparams = [USER_SCHOOL_ID];
 		$arr = $db->rawQuery($sqltext, $queryparams);
 		return $arr;
 	}
@@ -24,8 +24,8 @@ class SharedController extends BaseController{
      */
 	function tabpelanggaran_jpelanggaran_id_option_list(){
 		$db = $this->GetModel();
-		$sqltext = "SELECT id AS value , id AS label FROM tabjenispelanggaran ORDER BY label ASC";
-		$queryparams = null;
+		$sqltext = "SELECT id AS value , nama AS label FROM tabjenispelanggaran WHERE school_id = ? ORDER BY label ASC";
+		$queryparams = [USER_SCHOOL_ID];
 		$arr = $db->rawQuery($sqltext, $queryparams);
 		return $arr;
 	}

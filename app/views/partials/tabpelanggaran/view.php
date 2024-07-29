@@ -80,7 +80,7 @@ $show_export_btn = $this->show_export_btn;
                                                 data-pk="<?php echo $data['id'] ?>" 
                                                 data-url="<?php print_link("tabpelanggaran/editfield/" . urlencode($data['id'])); ?>" 
                                                 data-name="tgl" 
-                                                data-title="Enter Tgl" 
+                                                data-title="Tanggal" 
                                                 data-placement="left" 
                                                 data-toggle="click" 
                                                 data-type="flatdatetimepicker" 
@@ -98,7 +98,7 @@ $show_export_btn = $this->show_export_btn;
                                                 data-pk="<?php echo $data['id'] ?>" 
                                                 data-url="<?php print_link("tabpelanggaran/editfield/" . urlencode($data['id'])); ?>" 
                                                 data-name="deskripsi" 
-                                                data-title="Enter Deskripsi" 
+                                                data-title="Deskripsi" 
                                                 data-placement="left" 
                                                 data-toggle="click" 
                                                 data-type="text" 
@@ -124,6 +124,14 @@ $show_export_btn = $this->show_export_btn;
                                     <tr  class="td-date_updated">
                                         <th class="title"> Date Updated: </th>
                                         <td class="value"> <?php echo $data['date_updated']; ?></td>
+                                    </tr>
+                                    <tr  class="td-kelas">
+                                        <th class="title"> Kelas: </th>
+                                        <td class="value"> <?php echo $data['kelas']; ?></td>
+                                    </tr>
+                                    <tr  class="td-ortu_number">
+                                        <th class="title"> Ortu Number: </th>
+                                        <td class="value"> <?php echo $data['ortu_number']; ?></td>
                                     </tr>
                                 </tbody>
                                 <!-- Table Body End -->

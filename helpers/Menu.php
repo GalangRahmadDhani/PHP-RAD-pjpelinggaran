@@ -16,6 +16,18 @@ class Menu{
 		),
 		
 		array(
+			'path' => 'tabpelanggaran', 
+			'label' => 'Pelanggaran', 
+			'icon' => '<i class="material-icons ">warning</i>'
+		),
+		
+		array(
+			'path' => 'tabjenispelanggaran', 
+			'label' => 'Jenis Pelanggaran', 
+			'icon' => '<i class="material-icons ">announcement</i>'
+		),
+		
+		array(
 			'path' => 'tabsiswa', 
 			'label' => 'Siswa', 
 			'icon' => '<i class="material-icons ">school</i>'
@@ -43,18 +55,6 @@ class Menu{
 			'path' => 'tabguru', 
 			'label' => 'Guru', 
 			'icon' => '<i class="material-icons ">people</i>'
-		),
-		
-		array(
-			'path' => 'tabpelanggaran', 
-			'label' => 'Pelanggaran', 
-			'icon' => '<i class="material-icons ">warning</i>'
-		),
-		
-		array(
-			'path' => 'tabjenispelanggaran', 
-			'label' => 'Jenis Pelanggaran', 
-			'icon' => '<i class="material-icons ">announcement</i>'
 		),
 		
 		array(

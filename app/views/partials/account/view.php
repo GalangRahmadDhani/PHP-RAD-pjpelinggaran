@@ -93,10 +93,6 @@ $show_export_btn = $this->show_export_btn;
                                         <div class="tab-pane show active fade" id="AccountPageView" role="tabpanel">
                                             <table class="table table-hover table-borderless table-striped">
                                                 <tbody class="page-data" id="page-data-<?php echo $page_element_id; ?>">
-                                                    <tr  class="td-id">
-                                                        <th class="title"> Id: </th>
-                                                        <td class="value"> <?php echo $data['id']; ?></td>
-                                                    </tr>
                                                     <tr  class="td-nama">
                                                         <th class="title"> Nama: </th>
                                                         <td class="value">
@@ -119,27 +115,20 @@ $show_export_btn = $this->show_export_btn;
                                                         <th class="title"> Email: </th>
                                                         <td class="value"> <?php echo $data['email']; ?></td>
                                                     </tr>
+                                                    <tr  class="td-image">
+                                                        <th class="title"> Gambar: </th>
+                                                        <td class="value"><?php Html :: page_img($data['image'],1280,800,1); ?></td>
+                                                    </tr>
                                                     <tr  class="td-user_role_id">
-                                                        <th class="title"> User Role Id: </th>
+                                                        <th class="title"> Akses Sebagai: </th>
                                                         <td class="value">
-                                                            <span <?php if($can_edit){ ?> data-source='<?php print_link('api/json/account_user_role_id_option_list'); ?>' 
-                                                                data-value="<?php echo $data['user_role_id']; ?>" 
-                                                                data-pk="<?php echo $data['id'] ?>" 
-                                                                data-url="<?php print_link("tabuser/editfield/" . urlencode($data['id'])); ?>" 
-                                                                data-name="user_role_id" 
-                                                                data-title="Select a value ..." 
-                                                                data-placement="left" 
-                                                                data-toggle="click" 
-                                                                data-type="select" 
-                                                                data-mode="popover" 
-                                                                data-showbuttons="left" 
-                                                                class="is-editable" <?php } ?>>
-                                                                <?php echo $data['user_role_id']; ?> 
-                                                            </span>
+                                                            <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/account/roles/role_id/" . urlencode($data['user_role_id'])) ?>">
+                                                                <i class="material-icons">visibility</i> <?php echo $data['roles_role_name'] ?>
+                                                            </a>
                                                         </td>
                                                     </tr>
                                                     <tr  class="td-school_id">
-                                                        <th class="title"> School Id: </th>
+                                                        <th class="title"> Sekolah: </th>
                                                         <td class="value">
                                                             <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/account/tabsekolah/id/" . urlencode($data['school_id'])) ?>">
                                                                 <i class="material-icons">visibility</i> <?php echo $data['tabsekolah_nama'] ?>

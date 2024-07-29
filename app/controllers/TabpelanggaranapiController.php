@@ -19,11 +19,12 @@ class TabpelanggaranapiController extends SecureController{
 		$db = $this->GetModel();
 		$tablename = $this->tablename;
 		$fields = array(
-			"id", 
-			"siswa_id", 
-			"jpelanggaran_id", 
-			"tgl", 
-			"deskripsi"
+			"tabpelanggaran.id", 
+			"tabpelanggaran.siswa_id", 
+			"tabpelanggaran.jpelanggaran_id", 
+			"tabpelanggaran.tgl", 
+			"tabpelanggaran.deskripsi",
+			"tabortu.number AS ortu_number"
 		);
 	
 		// Search table record
@@ -53,8 +54,12 @@ class TabpelanggaranapiController extends SecureController{
 	
 		// Field filtering
 		if ($fieldname) {
-			$db->where($fieldname, $fieldvalue);
+			$db->where("tabpelanggaran." . $fieldname, $fieldvalue);
 		}
+	
+		// Modify the query to include joins
+		$db->join("tabsiswa", "tabpelanggaran.siswa_id = tabsiswa.id", "LEFT");
+		$db->join("tabortu", "tabsiswa.ortu_id = tabortu.id", "LEFT");
 	
 		// Add school filter
 		$db->where("tabpelanggaran.school_id", USER_SCHOOL_ID);

@@ -34,12 +34,12 @@ $redirect_to = $this->redirect_to;
                                 <div class="form-group ">
                                     <div class="row">
                                         <div class="col-sm-4">
-                                            <label class="control-label" for="siswa_id">Pilih Siswa... <span class="text-danger">*</span></label>
+                                            <label class="control-label" for="siswa_id">Siswa <span class="text-danger">*</span></label>
                                         </div>
                                         <div class="col-sm-8">
                                             <div class="">
-                                                <select required=""  id="ctrl-siswa_id" name="siswa_id"  placeholder="Select a value ..."    class="custom-select" >
-                                                    <option value="">Select a value ...</option>
+                                                <select required=""  id="ctrl-siswa_id" name="siswa_id"  placeholder="Pilih Siswa"    class="custom-select" >
+                                                    <option value="">Pilih Siswa</option>
                                                     <?php 
                                                     $siswa_id_options = $comp_model -> tabpelanggaran_siswa_id_option_list();
                                                     if(!empty($siswa_id_options)){
@@ -63,12 +63,12 @@ $redirect_to = $this->redirect_to;
                                 <div class="form-group ">
                                     <div class="row">
                                         <div class="col-sm-4">
-                                            <label class="control-label" for="jpelanggaran_id">Jpelanggaran Id <span class="text-danger">*</span></label>
+                                            <label class="control-label" for="jpelanggaran_id">Pelanggaran Yang Dilakukan <span class="text-danger">*</span></label>
                                         </div>
                                         <div class="col-sm-8">
                                             <div class="">
-                                                <select required=""  id="ctrl-jpelanggaran_id" name="jpelanggaran_id"  placeholder="Select a value ..."    class="custom-select" >
-                                                    <option value="">Select a value ...</option>
+                                                <select required=""  id="ctrl-jpelanggaran_id" name="jpelanggaran_id"  placeholder="Pilih Pelanggaran..."    class="custom-select" >
+                                                    <option value="">Pilih Pelanggaran...</option>
                                                     <?php 
                                                     $jpelanggaran_id_options = $comp_model -> tabpelanggaran_jpelanggaran_id_option_list();
                                                     if(!empty($jpelanggaran_id_options)){
@@ -92,11 +92,11 @@ $redirect_to = $this->redirect_to;
                                 <div class="form-group ">
                                     <div class="row">
                                         <div class="col-sm-4">
-                                            <label class="control-label" for="tgl">Tgl <span class="text-danger">*</span></label>
+                                            <label class="control-label" for="tgl">Tanggal Pelanggaran <span class="text-danger">*</span></label>
                                         </div>
                                         <div class="col-sm-8">
                                             <div class="input-group">
-                                                <input id="ctrl-tgl" class="form-control datepicker  datepicker" required="" value="<?php  echo $this->set_field_value('tgl',datetime_now()); ?>" type="datetime"  name="tgl" placeholder="Enter Tgl" data-enable-time="true" data-min-date="" data-max-date="" data-date-format="Y-m-d H:i:S" data-alt-format="Y-m-d H:i:s" data-inline="false" data-no-calendar="false" data-mode="single" /> 
+                                                <input id="ctrl-tgl" class="form-control datepicker  datepicker" required="" value="<?php  echo $this->set_field_value('tgl',datetime_now()); ?>" type="datetime"  name="tgl" placeholder="Tanggal" data-enable-time="true" data-min-date="" data-max-date="" data-date-format="Y-m-d H:i:S" data-alt-format="Y-m-d H:i:s" data-inline="false" data-no-calendar="false" data-mode="single" /> 
                                                     <div class="input-group-append">
                                                         <span class="input-group-text"><i class="material-icons">date_range</i></span>
                                                     </div>
@@ -107,11 +107,11 @@ $redirect_to = $this->redirect_to;
                                     <div class="form-group ">
                                         <div class="row">
                                             <div class="col-sm-4">
-                                                <label class="control-label" for="deskripsi">Deskripsi <span class="text-danger">*</span></label>
+                                                <label class="control-label" for="deskripsi">Deskripsi Pelanggaran <span class="text-danger">*</span></label>
                                             </div>
                                             <div class="col-sm-8">
                                                 <div class="">
-                                                    <input id="ctrl-deskripsi"  value="<?php  echo $this->set_field_value('deskripsi',""); ?>" type="text" placeholder="Enter Deskripsi"  required="" name="deskripsi"  class="form-control " />
+                                                    <input id="ctrl-deskripsi"  value="<?php  echo $this->set_field_value('deskripsi',""); ?>" type="text" placeholder="Deskripsi"  required="" name="deskripsi"  class="form-control " />
                                                     </div>
                                                 </div>
                                             </div>

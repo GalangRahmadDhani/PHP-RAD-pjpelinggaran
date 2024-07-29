@@ -52,6 +52,7 @@ class TabortuController extends SecureController{
 			$db->where($fieldname , $fieldvalue); //filter by a single field name
 		}
 		$db->where("tabortu.school_id", USER_SCHOOL_ID);
+
 		$tc = $db->withTotalCount();
 		$records = $db->get($tablename, $pagination, $fields);
 		$records_count = count($records);
@@ -128,7 +129,7 @@ class TabortuController extends SecureController{
 			$tablename = $this->tablename;
 			$request = $this->request;
 			//fillable fields
-			$fields = $this->fields = array("nama","number","school_id");
+			$fields = $this->fields = array("nama","number", "school_id");
 			$postdata = $this->format_request_data($formdata);
 			$postdata['school_id'] = USER_SCHOOL_ID; 
 

@@ -14,25 +14,31 @@ class TabjenispelanggaranapiController extends SecureController{
      * @param $fieldvalue (filter field value)
      * @return BaseView
      */
-	function indexapi($fieldname = null , $fieldvalue = null){
+	function index($fieldname = null , $fieldvalue = null){
 		$request = $this->request;
 		$db = $this->GetModel();
 		$tablename = $this->tablename;
-		$fields = array("id", "nama", "poin");
-	
+		$fields = array("id", 
+			"nama", 
+			"poin");
+		$pagination = $this->get_pagination(MAX_RECORD_COUNT); // get current pagination e.g array(page_number, page_limit)
 		//search table record
 		if(!empty($request->search)){
 			$text = trim($request->search); 
 			$search_condition = "(
 				tabjenispelanggaran.id LIKE ? OR 
 				tabjenispelanggaran.nama LIKE ? OR 
-				tabjenispelanggaran.poin LIKE ?
+				tabjenispelanggaran.poin LIKE ? OR 
+				tabjenispelanggaran.date_created LIKE ? OR 
+				tabjenispelanggaran.date_updated LIKE ?
 			)";
 			$search_params = array(
-				"%$text%","%$text%","%$text%"
+				"%$text%","%$text%","%$text%","%$text%","%$text%"
 			);
 			//setting search conditions
 			$db->where($search_condition, $search_params);
+			 //template to use when ajax search
+			$this->view->search_template = "tabjenispelanggaran/search.php";
 		}
 		if(!empty($request->orderby)){
 			$orderby = $request->orderby;
@@ -46,17 +52,28 @@ class TabjenispelanggaranapiController extends SecureController{
 			$db->where($fieldname , $fieldvalue); //filter by a single field name
 		}
 		$db->where("tabjenispelanggaran.school_id", USER_SCHOOL_ID);
-		$records = $db->get($tablename, null, $fields);
-	
+
+		$tc = $db->withTotalCount();
+		$records = $db->get($tablename, $pagination, $fields);
+		$records_count = count($records);
+		$total_records = intval($tc->totalCount);
+		$page_limit = $pagination[1];
+		$total_pages = ceil($total_records / $page_limit);
 		$data = new stdClass;
 		$data->records = $records;
-		$data->record_count = count($records);
-	
+		$data->record_count = $records_count;
+		$data->total_records = $total_records;
+		$data->total_page = $total_pages;
 		if($db->getLastError()){
 			$this->set_page_error();
 		}
-	
-		return render_json($data);
+		$page_title = $this->view->page_title = "Jenis Pelanggaran";
+		$this->view->report_filename = date('Y-m-d') . '-' . $page_title;
+		$this->view->report_title = $page_title;
+		$this->view->report_layout = "report_layout.php";
+		$this->view->report_paper_size = "A4";
+		$this->view->report_orientation = "portrait";
+		$this->render_view("tabjenispelanggaran/list.php", $data); //render the full page
 	}
 	/**
      * View record detail 
@@ -73,7 +90,9 @@ class TabjenispelanggaranapiController extends SecureController{
 			"nama", 
 			"poin", 
 			"posted_by", 
-			"school_id");
+			"school_id", 
+			"date_created", 
+			"date_updated");
 		if($value){
 			$db->where($rec_id, urldecode($value)); //select record based on field name
 		}
@@ -104,28 +123,28 @@ class TabjenispelanggaranapiController extends SecureController{
 	 * @param $formdata array() from $_POST
      * @return BaseView
      */
-	function addapi($formdata = null){
+	function add($formdata = null){
 		if($formdata){
 			$db = $this->GetModel();
 			$tablename = $this->tablename;
 			$request = $this->request;
 			//fillable fields
-			$fields = $this->fields = array("nama", "poin", "school_id"); // {{ edit_1 }} - Tambahkan school_id
+			$fields = $this->fields = array("nama","poin");
 			$postdata = $this->format_request_data($formdata);
 			$postdata['school_id'] = USER_SCHOOL_ID; 
+
 
 			$this->rules_array = array(
 				'nama' => 'required',
 				'poin' => 'required',
-				'school_id' => 'required',
 			);
 			$this->sanitize_array = array(
 				'nama' => 'sanitize_string',
 				'poin' => 'sanitize_string',
-				'school_id' => 'sanitize_string', // {{ edit_4 }} - Dihapus dari sanitasi
 			);
 			$this->filter_vals = true; //set whether to remove empty fields
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
+			$modeldata['date_created'] = datetime_now();
 			if($this->validated()){
 				$rec_id = $this->rec_id = $db->insert($tablename, $modeldata);
 				if($rec_id){
@@ -146,7 +165,7 @@ class TabjenispelanggaranapiController extends SecureController{
 	 * @param $formdata array() from $_POST
      * @return array
      */
-	function editapi($rec_id = null, $formdata = null){
+	function edit($rec_id = null, $formdata = null){
 		$request = $this->request;
 		$db = $this->GetModel();
 		$this->rec_id = $rec_id;
@@ -164,6 +183,7 @@ class TabjenispelanggaranapiController extends SecureController{
 				'poin' => 'sanitize_string',
 			);
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
+			$modeldata['date_updated'] = datetime_now();
 			if($this->validated()){
 				$db->where("tabjenispelanggaran.id", $rec_id);;
 				$bool = $db->update($tablename, $modeldata);
@@ -223,6 +243,7 @@ class TabjenispelanggaranapiController extends SecureController{
 			);
 			$this->filter_rules = true; //filter validation rules by excluding fields not in the formdata
 			$modeldata = $this->modeldata = $this->validate_form($postdata);
+			$modeldata['date_updated'] = datetime_now();
 			if($this->validated()){
 				$db->where("tabjenispelanggaran.id", $rec_id);;
 				$bool = $db->update($tablename, $modeldata);
@@ -256,7 +277,7 @@ class TabjenispelanggaranapiController extends SecureController{
 	 * Support multi delete by separating record id by comma.
      * @return BaseView
      */
-	function deleteapi($rec_id = null){
+	function delete($rec_id = null){
 		Csrf::cross_check();
 		$request = $this->request;
 		$db = $this->GetModel();

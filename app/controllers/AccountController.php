@@ -15,14 +15,16 @@ class AccountController extends SecureController{
 	function index(){
 		$db = $this->GetModel();
 		$rec_id = $this->rec_id = USER_ID; //get current user id from session
-		$db->where ("id", $rec_id);
+		$db->where ("tabuser.id", $rec_id);
 		$tablename = $this->tablename;
-		$fields = array("tabuser.id", 
+		$fields = array(
+			"tabuser.id", 
 			"tabuser.nama", 
 			"tabuser.email", 
 			"tabuser.user_role_id", 
 			"tabuser.school_id", 
-			"tabsekolah.nama AS tabsekolah_nama");
+			"tabsekolah.nama AS tabsekolah_nama"
+		);
 		$db->join("tabsekolah", "tabuser.school_id = tabsekolah.id", "INNER");
 		$user = $db->getOne($tablename , $fields);
 		if(!empty($user)){
@@ -118,24 +120,5 @@ class AccountController extends SecureController{
 			}
 		}
 		return $this->render_view("account/change_email.php");
-	}
-
-	function getaccount(){
-		$db = $this->GetModel();
-		$rec_id = $this->rec_id = USER_ID; //get current user id from session
-		$db->where ("id", $rec_id);
-		$tablename = $this->tablename;
-		$fields = array("id", 
-			"nama", 
-			"email");
-		$user = $db->getOne($tablename , $fields);
-		if(!empty($user)){
-			$page_title = $this->view->page_title = "My Account";
-			return render_json($user);
-		}
-		else{
-			$this->set_page_error();
-			$this->render_view("account/view.php");
-		}
 	}
 }

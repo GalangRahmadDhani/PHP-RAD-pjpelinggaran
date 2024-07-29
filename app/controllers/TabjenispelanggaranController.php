@@ -131,7 +131,8 @@ class TabjenispelanggaranController extends SecureController{
 			//fillable fields
 			$fields = $this->fields = array("nama","poin", "school_id");
 			$postdata = $this->format_request_data($formdata);
-			$db->where("tabsiswa.school_id", USER_SCHOOL_ID);
+			$postdata['school_id'] = USER_SCHOOL_ID; 
+
 
 			$this->rules_array = array(
 				'nama' => 'required',
