@@ -198,24 +198,24 @@ $show_pagination = $this->show_pagination;
                                                         ?>
                                                     </span></td>
                                                     <td class="td-kelas_id">
-                                                        <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/tabsiswa/tabkelas/id/" . urlencode($data['kelas_id'])) ?>">
-                                                            <i class="material-icons">visibility</i> <?php echo $data['tabkelas_nama'] ?>
-                                                        </a>
+                                                        <!-- <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/tabsiswa/tabkelas/id/" . urlencode($data['kelas_id'])) ?>"> -->
+                                                             <?php echo $data['tabkelas_nama'] ?>
+                                                        <!-- </a> -->
                                                     </td>
                                                     <td class="td-jurusan_id">
-                                                        <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/tabsiswa/tabjurusan/id/" . urlencode($data['jurusan_id'])) ?>">
-                                                            <i class="material-icons">visibility</i> <?php echo $data['tabjurusan_nama'] ?>
-                                                        </a>
+                                                        <!-- <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/tabsiswa/tabjurusan/id/" . urlencode($data['jurusan_id'])) ?>"> -->
+                                                             <?php echo $data['tabjurusan_nama'] ?>
+                                                        <!-- </a> -->
                                                     </td>
                                                     <td class="td-ortu_id">
-                                                        <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/tabsiswa/tabortu/id/" . urlencode($data['ortu_id'])) ?>">
-                                                            <i class="material-icons">visibility</i> <?php echo $data['tabortu_nama'] ?>
-                                                        </a>
+                                                        <!-- <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/tabsiswa/tabortu/id/" . urlencode($data['ortu_id'])) ?>"> -->
+                                                             <?php echo $data['tabortu_nama'] ?>
+                                                        <!-- </a> -->
                                                     </td>
                                                     <td class="td-guru_id">
-                                                        <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/tabsiswa/tabguru/id/" . urlencode($data['guru_id'])) ?>">
-                                                            <i class="material-icons">visibility</i> <?php echo $data['tabguru_nama'] ?>
-                                                        </a>
+                                                        <!-- <a size="sm" class="btn btn-sm btn-primary page-modal" href="<?php print_link("masterdetail/index/tabsiswa/tabguru/id/" . urlencode($data['guru_id'])) ?>"> -->
+                                                             <?php echo $data['tabguru_nama'] ?>
+                                                        <!-- </a> -->
                                                     </td>
                                                     <th class="td-btn">
                                                         <?php if($can_view){ ?>

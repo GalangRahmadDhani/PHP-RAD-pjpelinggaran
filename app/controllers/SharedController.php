@@ -130,8 +130,8 @@ class SharedController extends BaseController{
      */
 	function getcount_lakilaki(){
 		$db = $this->GetModel();
-		$sqltext = "SELECT COUNT(*) AS jumlah_laki FROM tabsiswa WHERE jenkel = 1;";
-		$queryparams = null;
+		$sqltext = "SELECT COUNT(*) AS jumlah_laki FROM tabsiswa WHERE school_id = ? AND jenkel = 1;";
+		$queryparams = [USER_SCHOOL_ID];
 		$val = $db->rawQueryValue($sqltext, $queryparams);
 		
 		if(is_array($val)){
@@ -146,8 +146,8 @@ class SharedController extends BaseController{
      */
 	function getcount_perempuan(){
 		$db = $this->GetModel();
-		$sqltext = "SELECT COUNT(*) AS jumlah_perempuan FROM tabsiswa WHERE jenkel = 2;";
-		$queryparams = null;
+		$sqltext = "SELECT COUNT(*) AS jumlah_perempuan FROM tabsiswa WHERE school_id = ? AND jenkel = 2;";
+		$queryparams = [USER_SCHOOL_ID];
 		$val = $db->rawQueryValue($sqltext, $queryparams);
 		
 		if(is_array($val)){
