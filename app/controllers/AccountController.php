@@ -121,4 +121,22 @@ class AccountController extends SecureController{
 		}
 		return $this->render_view("account/change_email.php");
 	}
+	function getaccount(){
+		$db = $this->GetModel();
+		$rec_id = $this->rec_id = USER_ID; //get current user id from session
+		$db->where ("id", $rec_id);
+		$tablename = $this->tablename;
+		$fields = array("id", 
+			"nama", 
+			"email");
+		$user = $db->getOne($tablename , $fields);
+		if(!empty($user)){
+			$page_title = $this->view->page_title = "My Account";
+			return render_json($user);
+		}
+		else{
+			$this->set_page_error();
+			$this->render_view("account/view.php");
+		}
+	}
 }
