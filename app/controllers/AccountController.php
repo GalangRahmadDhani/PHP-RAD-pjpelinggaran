@@ -128,7 +128,10 @@ class AccountController extends SecureController{
 		$tablename = $this->tablename;
 		$fields = array("id", 
 			"nama", 
-			"email");
+			"email",
+			"school_id",
+			"user_role_id"
+		);
 		$user = $db->getOne($tablename , $fields);
 		if(!empty($user)){
 			$page_title = $this->view->page_title = "My Account";
