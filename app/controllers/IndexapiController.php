@@ -153,7 +153,7 @@ class IndexapiController extends BaseController {
         ]);
     }
 
-    public function getAccountt($token) {
+    public function getAccount($token) {
         // Initialize Nobox with the token
         $nobox = new Nobox($token);
 

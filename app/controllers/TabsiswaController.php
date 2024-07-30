@@ -69,6 +69,7 @@ class TabsiswaController extends SecureController{
 		if($fieldname){
 			$db->where($fieldname , $fieldvalue); //filter by a single field name
 		}
+		
 		$db->where("tabsiswa.school_id", USER_SCHOOL_ID);
 
 		$tc = $db->withTotalCount();

@@ -152,17 +152,21 @@ class TabpelanggaranapiController extends SecureController{
 	
 		$db = $this->GetModel();
 		$tablename = $this->tablename;
-		$fields = $this->fields = ["siswa_id", "jpelanggaran_id", "tgl", "deskripsi", "school_id"];
+		$fields = $this->fields = ["siswa_id", "jpelanggaran_id", "tgl", "deskripsi", "school_id", "ortu_number"];
 	
 		$postdata = $this->format_request_data($formdata);
 		$postdata['school_id'] = USER_SCHOOL_ID;
+	
+		$ortu_id = $this->getOrtuId($postdata['siswa_id']);
+		$postdata['ortu_number'] = $this->getOrtuNumber($ortu_id);
 	
 		$this->rules_array = [
 			'siswa_id' => 'required',
 			'jpelanggaran_id' => 'required',
 			'tgl' => 'required',
 			'deskripsi' => 'required',
-			'school_id' => 'required'
+			'school_id' => 'required',
+			'ortu_number' => 'required'
 		];
 	
 		$this->sanitize_array = [
@@ -170,7 +174,8 @@ class TabpelanggaranapiController extends SecureController{
 			'jpelanggaran_id' => 'sanitize_string',
 			'tgl' => 'sanitize_string',
 			'deskripsi' => 'sanitize_string',
-			'school_id' => 'sanitize_string'
+			'school_id' => 'sanitize_string',
+			'ortu_number' => 'sanitize_string'
 		];
 	
 		$this->filter_vals = true;
@@ -196,16 +201,10 @@ class TabpelanggaranapiController extends SecureController{
 			if ($jenispelanggaranResult['status'] === 'success') {
 				$jenisPelanggaranNama = $jenispelanggaranResult['record']['nama'];
 	
-				// Now call the TabsiswaapiController view method with the name
-				$siswa_id = $modeldata['siswa_id'];
-				$siswaController = new TabsiswaapiController();
-				$viewResult = $siswaController->view($siswa_id, $modeldata['deskripsi'], $modeldata['tgl'], $jenisPelanggaranNama);
-	
 				return render_json([
 					'status' => 'success',
 					'message' => 'Record added successfully',
 					'rec_id' => $rec_id,
-					'view_result' => $viewResult
 				]);
 			} else {
 				return render_json([
@@ -221,10 +220,6 @@ class TabpelanggaranapiController extends SecureController{
 			]);
 		}
 	}
-	
-	
-	
-	
 	
 	/**
      * Update table record with formdata
@@ -433,4 +428,57 @@ class TabpelanggaranapiController extends SecureController{
 			]);
 		}
 	}
+
+	public function getOrtuId($id){
+		$siswa = new TabsiswaapiController();
+		$ortu_id = $siswa->view($id);
+		return $ortu_id;
+	}
+
+	public function getOrtuNumber($id){
+		$ortu = new TabortuapiController();
+		$number = $ortu->view($id);
+		return $number;
+	}
+
+	public function sendmessage() {
+		$request = $this->request;
+		$db = $this->GetModel();
+		$rec_id = $_POST['rec_id']; // Mengakses 'rec_id' dari $_POST
+		$tablename = $this->tablename;
+		$fields = array(
+			"id", 
+			"siswa_id", 
+			"jpelanggaran_id", 
+			"tgl", 
+			"deskripsi", 
+			"posted_by", 
+			"school_id",
+			"ortu_number"
+		);
+	
+		// Menggunakan rec_id untuk mendapatkan record
+		$db->where("tabpelanggaran.id", $rec_id);
+		$record = $db->getOne($tablename, $fields);
+	
+		if ($record) {
+			$page_title = $this->view->page_title = "View Tabpelanggaran";
+			$this->view->report_filename = date('Y-m-d') . '-' . $page_title;
+			$this->view->report_title = $page_title;
+			$this->view->report_layout = "report_layout.php";
+			$this->view->report_paper_size = "A4";
+			$this->view->report_orientation = "portrait";
+			
+			return $this->render_view("tabpelanggaran/view.php", $record);
+		} else {
+			if ($db->getLastError()) {
+				$this->set_page_error($db->getLastError());
+			} else {
+				$this->set_page_error("No record found");
+			}
+		}
+	
+		return render_json($record);
+	}
+	
 }

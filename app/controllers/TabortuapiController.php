@@ -85,15 +85,12 @@ class TabortuapiController extends SecureController{
 	
 		if ($record) {
 			$number = $record['number']; // Extract the 'number' field
-			$longdesc = "$desc pada tanggal $tgl"; // Correctly format the description
+			// $longdesc = "$desc pada tanggal $tgl"; // Correctly format the description
 			// Initialize IndexapiController and send the message
 			$nobox = new IndexapiController();
-			$send = $nobox->sendMessage($number, $longdesc);
+			// $send = $nobox->sendMessage($number, $longdesc);
 	
-			return render_json([
-				'status' => 'success',
-				'send_result' => $send
-			]);
+			return $number;
 		} else {
 			return render_json([
 				'status' => 'error',

@@ -97,13 +97,9 @@ class TabsiswaapiController extends SecureController{
 	
 			// Ensure TabortuapiController exists and method view() is available
 			$ortu = new TabortuapiController();
-			$ortuResult = $ortu->view($ortu_id, $desc, $tgl, $jp); // Call view method with ortu_id
+			// $ortuResult = $ortu->view($ortu_id, $desc, $tgl, $jp); // Call view method with ortu_id
 			
-			return [
-				'status' => 'success',
-				'record' => $record,
-				'ortu' => $ortuResult // Return the result from TabortuapiController
-			];
+			return $ortu_id;
 		} else {
 			return [
 				'status' => 'error',
