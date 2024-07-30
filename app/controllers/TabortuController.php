@@ -116,7 +116,7 @@ class TabortuController extends SecureController{
 				$this->set_page_error("No record found");
 			}
 		}
-		return $this->render_view("tabortu/view.php", $record);
+		return $this->r("tabortu/view.php", $record);
 	}
 	/**
      * Insert new record to the database table

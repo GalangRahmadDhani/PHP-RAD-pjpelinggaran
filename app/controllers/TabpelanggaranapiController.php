@@ -14,7 +14,7 @@ class TabpelanggaranapiController extends SecureController{
      * @param $fieldvalue (filter field value)
      * @return BaseView
      */
-	function indexapi($fieldname = null, $fieldvalue = null) {
+	function indexapi($id = null) {
 		$request = $this->request;
 		$db = $this->GetModel();
 		$tablename = $this->tablename;
@@ -24,37 +24,37 @@ class TabpelanggaranapiController extends SecureController{
 			"tabpelanggaran.jpelanggaran_id", 
 			"tabpelanggaran.tgl", 
 			"tabpelanggaran.deskripsi",
-			"tabortu.number AS ortu_number"
+			"tabortu.number AS number"
 		);
 	
-		// Search table record
-		if (!empty($request->search)) {
-			$text = trim($request->search); 
-			$search_condition = "(
-				tabpelanggaran.id LIKE ? OR 
-				tabpelanggaran.siswa_id LIKE ? OR 
-				tabpelanggaran.jpelanggaran_id LIKE ? OR 
-				tabpelanggaran.tgl LIKE ? OR 
-				tabpelanggaran.deskripsi LIKE ?
-			)";
-			$search_params = array(
-				"%$text%","%$text%","%$text%","%$text%","%$text%"
-			);
-			$db->where($search_condition, $search_params);
-		}
-	
-		// Ordering
-		if (!empty($request->orderby)) {
-			$orderby = $request->orderby;
-			$ordertype = (!empty($request->ordertype) ? $request->ordertype : ORDER_TYPE);
-			$db->orderBy($orderby, $ordertype);
+		// If ID is provided, fetch only that record
+		if ($id !== null) {
+			$db->where("tabpelanggaran.id", $id);
 		} else {
-			$db->orderBy("tabpelanggaran.id", ORDER_TYPE);
-		}
+			// Search table record
+			if (!empty($request->search)) {
+				$text = trim($request->search); 
+				$search_condition = "(
+					tabpelanggaran.id LIKE ? OR 
+					tabpelanggaran.siswa_id LIKE ? OR 
+					tabpelanggaran.jpelanggaran_id LIKE ? OR 
+					tabpelanggaran.tgl LIKE ? OR 
+					tabpelanggaran.deskripsi LIKE ?
+				)";
+				$search_params = array(
+					"%$text%","%$text%","%$text%","%$text%","%$text%"
+				);
+				$db->where($search_condition, $search_params);
+			}
 	
-		// Field filtering
-		if ($fieldname) {
-			$db->where("tabpelanggaran." . $fieldname, $fieldvalue);
+			// Ordering
+			if (!empty($request->orderby)) {
+				$orderby = $request->orderby;
+				$ordertype = (!empty($request->ordertype) ? $request->ordertype : ORDER_TYPE);
+				$db->orderBy($orderby, $ordertype);
+			} else {
+				$db->orderBy("tabpelanggaran.id", ORDER_TYPE);
+			}
 		}
 	
 		// Modify the query to include joins
@@ -76,10 +76,19 @@ class TabpelanggaranapiController extends SecureController{
 			]);
 		}
 	
+		// If ID was provided but no record found
+		if ($id !== null && $records_count === 0) {
+			return render_json([
+				'status' => 'error',
+				'message' => 'Record not found',
+				'data' => []
+			]);
+		}
+	
 		return render_json([
 			'status' => 'success',
 			'data' => [
-				'records' => $records,
+				'records' => $id !== null ? $records[0] : $records,
 				'record_count' => $records_count
 			]
 		]);
@@ -133,7 +142,7 @@ class TabpelanggaranapiController extends SecureController{
 	 * @param $formdata array() from $_POST
      * @return BaseView
      */
-	function addapi($formdata = null) {
+	public function addapi($formdata = null) {
 		if (!$formdata) {
 			return render_json([
 				"status" => "error",
@@ -144,7 +153,7 @@ class TabpelanggaranapiController extends SecureController{
 		$db = $this->GetModel();
 		$tablename = $this->tablename;
 		$fields = $this->fields = ["siswa_id", "jpelanggaran_id", "tgl", "deskripsi", "school_id"];
-		
+	
 		$postdata = $this->format_request_data($formdata);
 		$postdata['school_id'] = USER_SCHOOL_ID;
 	
@@ -178,11 +187,32 @@ class TabpelanggaranapiController extends SecureController{
 		$rec_id = $this->rec_id = $db->insert($tablename, $modeldata);
 	
 		if ($rec_id) {
-			return render_json([
-				'status' => 'success',
-				'message' => 'Record added successfully',
-				'rec_id' => $rec_id
-			]);
+			$jpelanggaran_id = $modeldata['jpelanggaran_id'];
+	
+			// Get the name of the jenis pelanggaran
+			$jenispelanggaranController = new TabjenispelanggaranapiController();
+			$jenispelanggaranResult = $jenispelanggaranController->view($jpelanggaran_id);
+	
+			if ($jenispelanggaranResult['status'] === 'success') {
+				$jenisPelanggaranNama = $jenispelanggaranResult['record']['nama'];
+	
+				// Now call the TabsiswaapiController view method with the name
+				$siswa_id = $modeldata['siswa_id'];
+				$siswaController = new TabsiswaapiController();
+				$viewResult = $siswaController->view($siswa_id, $modeldata['deskripsi'], $modeldata['tgl'], $jenisPelanggaranNama);
+	
+				return render_json([
+					'status' => 'success',
+					'message' => 'Record added successfully',
+					'rec_id' => $rec_id,
+					'view_result' => $viewResult
+				]);
+			} else {
+				return render_json([
+					"status" => "error",
+					"message" => "Failed to get jenis pelanggaran"
+				]);
+			}
 		} else {
 			return render_json([
 				"status" => "error",
@@ -191,6 +221,10 @@ class TabpelanggaranapiController extends SecureController{
 			]);
 		}
 	}
+	
+	
+	
+	
 	
 	/**
      * Update table record with formdata

@@ -153,7 +153,7 @@ class IndexapiController extends BaseController {
         ]);
     }
 
-    public function getAccount($token) {
+    public function getAccountt($token) {
         // Initialize Nobox with the token
         $nobox = new Nobox($token);
 
@@ -170,7 +170,7 @@ class IndexapiController extends BaseController {
         echo json_encode($data);
     }
 
-    public function sendMessage() {
+    public function sendMessage($nohp, $message) {
         // Retrieve the token from session
         $token = $this->noboxToken;
 
@@ -180,11 +180,11 @@ class IndexapiController extends BaseController {
         }
 
         // Retrieve other request parameters
-        $extId = isset($_POST['nohp']) ? $_POST['nohp'] : '';
+        $extId = $nohp;
         $channelId = '1';
         $accountIds = '549325967183941';
         $bodyType = '1';
-        $body = isset($_POST['message']) ? $_POST['message'] : '';
+        $body = $message;
         $attachment = '';
 
         // Initialize Nobox with the token

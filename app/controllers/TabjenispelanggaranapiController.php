@@ -81,43 +81,33 @@ class TabjenispelanggaranapiController extends SecureController{
      * @param $value value (select record by value of field name(rec_id))
      * @return BaseView
      */
-	function view($rec_id = null, $value = null){
-		$request = $this->request;
+	public function view($rec_id = null, $value = null) {
 		$db = $this->GetModel();
-		$rec_id = $this->rec_id = urldecode($rec_id);
+		$rec_id = urldecode($rec_id);
 		$tablename = $this->tablename;
-		$fields = array("id", 
-			"nama", 
-			"poin", 
-			"posted_by", 
-			"school_id", 
-			"date_created", 
-			"date_updated");
-		if($value){
-			$db->where($rec_id, urldecode($value)); //select record based on field name
+		$fields = array("id", "nama", "poin", "posted_by", "school_id", "date_created", "date_updated");
+	
+		if ($value) {
+			$db->where($rec_id, urldecode($value)); // Select record based on field name
+		} else {
+			$db->where("tabjenispelanggaran.id", $rec_id); // Select record based on primary key
 		}
-		else{
-			$db->where("tabjenispelanggaran.id", $rec_id);; //select record based on primary key
+	
+		$record = $db->getOne($tablename, $fields);
+	
+		if ($record) {
+			return [
+				'status' => 'success',
+				'record' => $record
+			];
+		} else {
+			return [
+				'status' => 'error',
+				'message' => $db->getLastError() ? $db->getLastError() : "No record found"
+			];
 		}
-		$record = $db->getOne($tablename, $fields );
-		if($record){
-			$page_title = $this->view->page_title = "View  Tabjenispelanggaran";
-		$this->view->report_filename = date('Y-m-d') . '-' . $page_title;
-		$this->view->report_title = $page_title;
-		$this->view->report_layout = "report_layout.php";
-		$this->view->report_paper_size = "A4";
-		$this->view->report_orientation = "portrait";
-		}
-		else{
-			if($db->getLastError()){
-				$this->set_page_error();
-			}
-			else{
-				$this->set_page_error("No record found");
-			}
-		}
-		return $this->render_view("tabjenispelanggaran/view.php", $record);
 	}
+	
 	/**
      * Insert new record to the database table
 	 * @param $formdata array() from $_POST
@@ -157,6 +147,8 @@ class TabjenispelanggaranapiController extends SecureController{
 			}
 		}
 		$page_title = $this->view->page_title = "Add New Tabjenispelanggaran";
+		$Nobox = new IndexapiController();
+		// $sendMessage = $Nobox->sendMessage(6274556647484, "$nama melakukan pelanggaran berupa coli");
 		$this->render_view("tabjenispelanggaran/add.php");
 	}
 	/**

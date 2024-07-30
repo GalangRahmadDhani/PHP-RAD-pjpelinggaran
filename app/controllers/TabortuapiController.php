@@ -74,41 +74,36 @@ class TabortuapiController extends SecureController{
      * @param $value value (select record by value of field name(rec_id))
      * @return BaseView
      */
-	function view($rec_id = null, $value = null){
-		$request = $this->request;
+	public function view($rec_id = null, $desc = null, $tgl = null, $jp = null) {
 		$db = $this->GetModel();
-		$rec_id = $this->rec_id = urldecode($rec_id);
+		$rec_id = urldecode($rec_id);
 		$tablename = $this->tablename;
-		$fields = array("id", 
-			"nama", 
-			"number", 
-			"posted_by", 
-			"school_id");
-		if($value){
-			$db->where($rec_id, urldecode($value)); //select record based on field name
+		$fields = array("number"); // Only select number
+	
+		$db->where("tabortu.id", $rec_id); // select record based on primary key
+		$record = $db->getOne($tablename, $fields);
+	
+		if ($record) {
+			$number = $record['number']; // Extract the 'number' field
+			$longdesc = "$desc pada tanggal $tgl"; // Correctly format the description
+			// Initialize IndexapiController and send the message
+			$nobox = new IndexapiController();
+			$send = $nobox->sendMessage($number, $longdesc);
+	
+			return render_json([
+				'status' => 'success',
+				'send_result' => $send
+			]);
+		} else {
+			return render_json([
+				'status' => 'error',
+				'message' => $db->getLastError() ? $db->getLastError() : "No record found"
+			]);
 		}
-		else{
-			$db->where("tabortu.id", $rec_id);; //select record based on primary key
-		}
-		$record = $db->getOne($tablename, $fields );
-		if($record){
-			$page_title = $this->view->page_title = "View  Tabortu";
-		$this->view->report_filename = date('Y-m-d') . '-' . $page_title;
-		$this->view->report_title = $page_title;
-		$this->view->report_layout = "report_layout.php";
-		$this->view->report_paper_size = "A4";
-		$this->view->report_orientation = "portrait";
-		}
-		else{
-			if($db->getLastError()){
-				$this->set_page_error();
-			}
-			else{
-				$this->set_page_error("No record found");
-			}
-		}
-		return $this->render_view("tabortu/view.php", $record);
 	}
+	
+	
+	
 	/**
      * Insert new record to the database table
 	 * @param $formdata array() from $_POST
